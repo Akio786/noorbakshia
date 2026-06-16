@@ -1,4 +1,4 @@
-# 🌙 Noorbakshia 365
+# 🌙 Noorbakshia WebApp
 
 > A beautiful, feature-rich **Islamic Progressive Web App (PWA)** for the Noorbakhshia community — featuring the complete Holy Quran, Noorbakhshia library books, Awrad & Duas, Prayer Times, Qibla Compass, and much more.
 
