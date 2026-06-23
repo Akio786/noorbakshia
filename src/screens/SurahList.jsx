@@ -52,7 +52,7 @@ export const SurahList = ({ setTab }) => {
         <div className="w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative z-20">
             
             {/* Top Header (Sticky Fade Mask) */}
-            <div className="w-full sticky top-0 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent -mx-6 px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8">
+            <div className="self-stretch sticky -top-10 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent -mx-6 px-6 -mt-10 pt-[calc(5.5rem+env(safe-area-inset-top))] pb-8">
                 <div className="pointer-events-auto">
                     <div className="flex items-center gap-3 mb-4">
                         <button onClick={goBack} className="w-10 h-10 rounded-full border border-cream/10 flex items-center justify-center text-sage hover:text-gold hover:border-gold/30 transition-all shadow-inner bg-emerald-dark shrink-0">
@@ -121,7 +121,7 @@ export const SurahList = ({ setTab }) => {
                                 key={`surah-${surah.number}`} 
                                 delay={`anim-delay-0`}
                                 onClick={() => setTab('quran-reader', { book: { readType: 'surah', id: surah.number, title: surah.englishName } })}
-                                className="!p-1 hover:scale-[1.02] transition-transform"
+                                className="hover:scale-[1.02] transition-transform"
                             >
                                 <div className="flex items-center justify-between pointer-events-none">
                                     <div className="flex items-center gap-4">
@@ -152,7 +152,7 @@ export const SurahList = ({ setTab }) => {
                                 key={`juz-${juz.id}`} 
                                 delay={`anim-delay-0`}
                                 onClick={() => setTab('quran-reader', { book: { readType: 'juz', id: juz.id, title: `Juz ${juz.id}` } })}
-                                className="!p-1 hover:scale-[1.02] transition-transform"
+                                className="hover:scale-[1.02] transition-transform"
                             >
                                 <div className="flex items-center gap-4 pointer-events-none p-2">
                                     <div className="w-12 h-12 shrink-0 rounded-full border border-gold/30 flex items-center justify-center text-gold text-sm font-display relative bg-emerald-dark">

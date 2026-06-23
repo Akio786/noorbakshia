@@ -12,7 +12,10 @@ export const CalendarScreen = ({ setTab }) => {
     
     // Decoupled state trackers for each calendar system
     const [gregorianDate, setGregorianDate] = useState(() => m().startOf('month'));
-    const [hijriDate, setHijriDate] = useState(() => m().iDate(1));
+    const [hijriDate, setHijriDate] = useState(() => m().add(hijriOffset, 'days').iDate(1));
+
+    // When offset changes, we might want to update the initial hijri view if we are still on "today's month"
+    // For simplicity, just use offset in the isToday check and initialization
 
     if (!gregorianDate || !hijriDate) return <div className="text-red-500 p-4">Calendar Error</div>;
 
@@ -62,7 +65,7 @@ export const CalendarScreen = ({ setTab }) => {
                 dayNumber: i,
                 isToday: currentDay.format('YYYY-MM-DD') === m().format('YYYY-MM-DD'),
                 hasEvent,
-                gregorianDate: currentDay
+                hijriEquivalent: currentDay.clone().add(hijriOffset, 'days') // keep offset for hover info if any
             });
         }
         return days;
@@ -82,15 +85,17 @@ export const CalendarScreen = ({ setTab }) => {
             days.push(null);
         }
 
+        const todayWithOffset = m().add(hijriOffset, 'days').format('iYYYY-iMM-iDD');
+
         for (let i = 1; i <= daysInMonth; i++) {
             const currentDay = hijriDate.clone().iDate(i);
             const hasEvent = currentHijriEvents.some(e => e.day === i);
             
             days.push({
                 dayNumber: i,
-                isToday: currentDay.format('iYYYY-iMM-iDD') === m().format('iYYYY-iMM-iDD'),
+                isToday: currentDay.format('iYYYY-iMM-iDD') === todayWithOffset,
                 hasEvent,
-                gregorianDate: currentDay
+                gregorianDate: currentDay // currentDay is an extended moment object, we can subtract offset to get true greg date if needed later
             });
         }
         return days;

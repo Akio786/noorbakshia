@@ -168,5 +168,11 @@ export const quranService = {
           if (!className) return text;
           return `<span class="${className}">${text}</span>`;
       });
+  },
+
+  stripTajweed: (rawText) => {
+      if (!rawText) return '';
+      const regex = /\[([a-z]+)(?::[0-9]+)?\[([^\]]+)\]/g;
+      return rawText.replace(regex, '$2');
   }
 };

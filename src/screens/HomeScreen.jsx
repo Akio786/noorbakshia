@@ -2,6 +2,7 @@ import React from 'react';
 import { DoubleBezelCard } from '../components/DoubleBezelCard';
 import { Eyebrow } from '../components/Eyebrow';
 import AmbientHero from '../components/AmbientHero';
+import PrayerAtmosphere from '../components/PrayerAtmosphere';
 import { useApp } from '../AppContext';
 import { getUpcomingEvents } from '../utils/events';
 import { getDailyName } from '../data/asmaulHusna';
@@ -45,12 +46,13 @@ export const HomeScreen = ({ setTab }) => {
 
     const { nextPrayerName, countdown, isLoading, prayersList } = usePrayerTimes();
 
+    const activePrayer = prayersList.find(p => p.current);
+    const currentPrayerName = activePrayer ? activePrayer.name : 'Isha';
+
     // Massive Background Weather Icon
     const getMassiveWeatherIcon = () => {
         switch(nextPrayerName.toLowerCase()) {
-            case 'qiyam': return <BsFillMoonStarsFill className="text-[240px] text-cream/10 drop-shadow-[0_0_30px_rgba(245,230,200,0.2)] animate-float absolute" />;
             case 'fajr': return <BsFillSunriseFill className="text-[240px] text-sage/10 drop-shadow-[0_0_30px_rgba(143,175,154,0.2)] animate-float absolute" />;
-            case 'shuruq': return <BsFillSunriseFill className="text-[280px] text-orange-400/10 drop-shadow-[0_0_30px_rgba(251,146,60,0.2)] animate-float absolute" />;
             case 'dhuhr': return <BsSunFill className="text-[280px] text-gold/10 drop-shadow-[0_0_40px_rgba(201,168,76,0.3)] animate-spin-slow origin-center absolute" />;
             case 'asr': return <BsSunFill className="text-[280px] text-gold/10 drop-shadow-[0_0_40px_rgba(201,168,76,0.2)] animate-spin-slow origin-center absolute opacity-80" />;
             case 'maghrib': return <BsCloudSunFill className="text-[240px] text-orange-400/10 drop-shadow-[0_0_30px_rgba(251,146,60,0.2)] animate-float absolute" />;
@@ -62,7 +64,7 @@ export const HomeScreen = ({ setTab }) => {
     return (
         <div className="w-full h-full overflow-y-auto hide-scroll px-6 pt-0 pb-[calc(10rem+env(safe-area-inset-bottom))] flex flex-col gap-6">
             {/* Top Header (Sticky Fade Mask) */}
-            <div className="sticky top-0 -mx-6 px-6 pt-[calc(1rem+env(safe-area-inset-top))] pb-6 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent">
+            <div className="self-stretch sticky -top-10 -mx-6 px-6 -mt-10 pt-[calc(3.5rem+env(safe-area-inset-top))] pb-6 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent">
                 <div className="w-full flex justify-between items-center animate-fade-down relative">
                     {/* Left: Date Pill */}
                     <button onClick={() => navigateTo('calendar')} className="bg-cream/5 border border-cream/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-sage hover:bg-cream/10 transition-colors pointer-events-auto shadow-inner">
@@ -87,28 +89,18 @@ export const HomeScreen = ({ setTab }) => {
                 {/* Dynamic Ambient Atmosphere for Hero Focus */}
                 <AmbientHero />
                 
-                <DoubleBezelCard className="!p-4 relative z-10">
-                    <div className="flex justify-between items-center w-full">
-                        {/* Left: Prayer Details */}
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-cream/5 border border-gold/20 flex items-center justify-center relative overflow-hidden">
-                                <div className="absolute inset-0 bg-gold/10"></div>
-                                <BsSunFill className="text-gold text-2xl relative z-10" />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-[9px] text-sage/80 uppercase tracking-[0.2em] mb-0.5 font-bold">NEXT PRAYER</span>
-                                <h2 className="font-display text-2xl text-cream uppercase tracking-widest leading-none">
-                                    {isLoading ? '...' : nextPrayerName}
-                                </h2>
-                            </div>
-                        </div>
-
-                        {/* Right: Countdown Timer */}
-                        <div className="flex flex-col items-end">
-                            <span className="font-body text-xl text-gold font-medium tracking-wider">
+                <DoubleBezelCard className="!p-0">
+                    <PrayerAtmosphere currentPrayer={currentPrayerName} />
+                    <div className="flex flex-col items-start w-full relative z-10 pt-8 pb-6 px-6">
+                        <span className="text-[10px] text-sage/90 uppercase tracking-[0.3em] mb-1 font-bold drop-shadow-md">NEXT PRAYER</span>
+                        <h2 className="font-display text-4xl text-cream uppercase tracking-widest leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] mb-3">
+                            {isLoading ? '...' : nextPrayerName}
+                        </h2>
+                        
+                        <div className="flex items-end gap-2 mt-1">
+                            <span className="font-body text-2xl text-gold font-bold tracking-widest drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                                 {countdown}
                             </span>
-                            <span className="text-[10px] text-sage/60 uppercase tracking-widest">Remaining</span>
                         </div>
                     </div>
                 </DoubleBezelCard>
@@ -127,29 +119,39 @@ export const HomeScreen = ({ setTab }) => {
                             <div key={prayer.name} className="flex items-center py-2 relative group w-full">
                                 {/* Timeline Dot */}
                                 <div className={`w-4 h-4 rounded-full border-2 absolute start-0 flex items-center justify-center transition-all duration-500 z-10
-                                    ${prayer.next ? 'border-gold bg-gold shadow-[0_0_15px_rgba(201,168,76,0.5)]' : 
-                                      (prayer.current ? 'border-emerald-400 bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.4)]' : 
+                                    ${prayer.current ? 'border-gold bg-gold shadow-[0_0_15px_rgba(201,168,76,0.5)]' : 
+                                      (prayer.next ? 'border-emerald-400 bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.4)]' : 
                                       (prayer.passed ? 'border-sage/10 bg-[#05110d]' : 'border-sage/30 bg-[#05110d]'))}
                                 `}>
+                                    {prayer.current && <div className="w-2 h-2 bg-[#05110d] rounded-full animate-pulse"></div>}
                                     {prayer.next && <div className="w-1.5 h-1.5 bg-[#05110d] rounded-full"></div>}
-                                    {prayer.current && <div className="w-2 h-2 bg-cream rounded-full animate-pulse"></div>}
                                 </div>
                                 
                                 <div className="ms-6 flex justify-between items-center w-full flex-1">
-                                    <span className={`text-sm tracking-widest uppercase transition-colors 
-                                        ${prayer.next ? 'text-gold font-bold' : 
-                                          (prayer.current ? 'text-cream font-bold' : 
-                                          (prayer.passed ? 'text-sage/30' : 'text-sage/70'))}
-                                    `}>
-                                        {prayer.name}
-                                    </span>
-                                    <div className="flex items-center">
+                                    <div className="flex items-center gap-2">
+                                        <span className={`text-sm tracking-widest uppercase transition-colors 
+                                            ${prayer.current ? 'text-gold font-bold' : 
+                                              (prayer.next ? 'text-cream font-bold' : 
+                                              (prayer.passed ? 'text-sage/30' : 'text-sage/70'))}
+                                        `}>
+                                            {prayer.name}
+                                        </span>
+                                        {prayer.current && <span className="text-[8px] bg-gold/10 text-gold px-1.5 py-0.5 rounded border border-gold/20 tracking-wider">NOW</span>}
+                                        {prayer.next && <span className="text-[8px] bg-emerald-400/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-400/20 tracking-wider">NEXT</span>}
+                                    </div>
+                                    <div className="flex flex-col items-end">
                                         <span className={`font-display transition-colors
-                                            ${prayer.next ? 'text-xl text-gold' : 
-                                              (prayer.current ? 'text-lg text-cream' : 
+                                            ${prayer.current ? 'text-xl text-gold' : 
+                                              (prayer.next ? 'text-lg text-cream' : 
                                               (prayer.passed ? 'text-md text-sage/30' : 'text-md text-sage/70'))}
                                         `}>
                                             {prayer.time}
+                                        </span>
+                                        <span className={`text-[9px] uppercase tracking-widest mt-0.5 font-medium transition-colors
+                                            ${prayer.current ? 'text-gold/70' : 
+                                              (prayer.next ? 'text-sage/70' : 'text-sage/30')}
+                                        `}>
+                                            Ends {prayer.endTime}
                                         </span>
                                     </div>
                                 </div>

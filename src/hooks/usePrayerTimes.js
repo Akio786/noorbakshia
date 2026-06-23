@@ -49,15 +49,12 @@ export const usePrayerTimes = () => {
                 yesterdayTimes = new PrayerTimes(coordinates, yesterday, params);
             }
 
-            // Calculate Qiyam (Tahajjud)
-            // Today's Qiyam is always calculated from yesterday's Maghrib to today's Fajr
-            const todaySunnahTimes = new SunnahTimes(yesterdayTimes);
-            const tomorrowSunnahTimes = new SunnahTimes(prayerTimes);
+            let tomorrow = new Date(date);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            let tomorrowTimes = new PrayerTimes(coordinates, tomorrow, params);
 
             const events = [
-                { name: 'Qiyam', time: todaySunnahTimes.lastThirdOfTheNight },
                 { name: 'Fajr', time: prayerTimes.fajr },
-                { name: 'Shuruq', time: prayerTimes.sunrise },
                 { name: 'Dhuhr', time: prayerTimes.dhuhr },
                 { name: 'Asr', time: prayerTimes.asr },
                 { name: 'Maghrib', time: prayerTimes.maghrib },
@@ -67,9 +64,9 @@ export const usePrayerTimes = () => {
             // Find the true next event
             let nextEvent = events.find(e => e.time.getTime() > now.getTime());
             
-            // Handle Edge Case: If after Isha, the next event is tomorrow's Qiyam
+            // Handle Edge Case: If after Isha, the next event is tomorrow's Fajr
             if (!nextEvent) {
-                nextEvent = { name: 'Qiyam', time: tomorrowSunnahTimes.lastThirdOfTheNight };
+                nextEvent = { name: 'Fajr', time: tomorrowTimes.fajr };
             }
 
             setNextPrayerName(nextEvent.name);
@@ -95,13 +92,25 @@ export const usePrayerTimes = () => {
             });
 
             const currentList = events.map((e, idx) => {
-                const nextEventTime = events[idx + 1] ? events[idx + 1].time : tomorrowSunnahTimes.lastThirdOfTheNight;
-                const isCurrent = now >= e.time && now < nextEventTime;
+                let nextEventTime = events[idx + 1] ? events[idx + 1].time : tomorrowTimes.fajr;
+                
+                // Fajr ends at Sunrise
+                if (e.name === 'Fajr') {
+                    nextEventTime = prayerTimes.sunrise;
+                }
+                
+                let isCurrent = now >= e.time && now < nextEventTime;
+                
+                // Edge case: Between midnight and today's Fajr, yesterday's Isha is still the active current prayer
+                if (e.name === 'Isha' && now < events[0].time) {
+                    isCurrent = true;
+                }
                 
                 return {
                     name: e.name,
                     time: formatter.format(e.time),
-                    passed: now >= nextEventTime,
+                    endTime: formatter.format(nextEventTime),
+                    passed: now >= nextEventTime && !isCurrent,
                     current: isCurrent,
                     next: nextEvent.time.getTime() === e.time.getTime()
                 };

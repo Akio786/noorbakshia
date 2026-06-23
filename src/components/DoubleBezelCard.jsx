@@ -4,11 +4,10 @@ export const DoubleBezelCard = ({ children, className = "", onClick, delay = "",
     return (
         <div 
             onClick={onClick}
-            className={`group relative p-1.5 rounded-[2rem] bg-emerald-dark ring-1 ring-cream/5 shadow-[inset_0_1px_1px_rgba(245,230,200,0.05)] ${onClick ? 'cursor-pointer active:scale-[0.98]' : ''} transition-all duration-700 ease-fluid animate-fade-up ${delay} ${colSpan} ${rowSpan} ${className}`}
+            className={`group w-full relative z-10 rounded-[2rem] overflow-hidden ring-1 ring-cream/5 shadow-lg bg-emerald-mid flex flex-col p-6 ${onClick ? 'cursor-pointer active:scale-[0.98] hover:bg-[#1f5540]' : ''} transition-all duration-700 ease-fluid animate-fade-up ${delay} ${colSpan} ${rowSpan} ${className}`}
+            style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
         >
-            <div className={`w-full h-full rounded-[calc(2rem-0.375rem)] bg-emerald-mid relative overflow-hidden transition-all duration-700 ease-fluid ${onClick ? 'group-hover:bg-[#1f5540]' : ''} flex flex-col p-6`}>
-                {children}
-            </div>
+            {children}
         </div>
     );
 };

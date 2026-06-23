@@ -43,12 +43,18 @@ export default {
         'pulse-slow': {
           '0%, 100%': { opacity: 0.3 },
           '50%': { opacity: 0.6 },
+        },
+        pan: {
+          '0%': { transform: 'translateX(-10%)' },
+          '100%': { transform: 'translateX(100%)' },
         }
       },
       animation: {
         'float': 'float 8s ease-in-out infinite',
         'twinkle': 'twinkle 4s ease-in-out infinite',
         'pulse-slow': 'pulse-slow 6s ease-in-out infinite',
+        'pan-slow': 'pan 60s linear infinite',
+        'pan-slower': 'pan 100s linear infinite',
       }
     },
   },

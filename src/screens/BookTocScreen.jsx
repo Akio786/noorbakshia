@@ -123,15 +123,15 @@ export const BookTocScreen = ({ setTab, selectedBook }) => {
                 key={chapter.id} 
                 delay={`anim-delay-${animDelay}`}
                 onClick={() => setTab('book-reader', { book: { ...selectedBook, chapterIndex: chapter.index } })}
-                className="!p-1 hover:scale-[1.02] transition-transform"
+                className="hover:scale-[1.02] transition-transform"
             >
-                <div className="flex items-center justify-between pointer-events-none">
-                    <div className="flex items-center gap-4 flex-1 min-w-0 pe-4">
-                        <div className="w-12 h-12 shrink-0 rounded-full border border-gold/30 flex items-center justify-center text-gold text-sm font-display relative bg-emerald-dark">
+                <div className="flex items-center justify-between pointer-events-none w-full">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="w-10 h-10 shrink-0 rounded-full border border-gold/30 flex items-center justify-center text-gold text-xs font-display relative bg-emerald-dark">
                             {chapter.index + 1}
                             <div className="absolute inset-0 bg-gold/5 rounded-full"></div>
                         </div>
-                        <div className="flex-1 min-w-0 flex flex-col justify-center py-2">
+                        <div className="flex-1 min-w-0">
                             {chapter.section && activeTab === 'All' && (
                                 <span className="text-gold/80 text-[8px] uppercase tracking-widest font-bold mb-1 block text-left truncate" dir="ltr">
                                     {chapter.section.replace('_', ' ')}
@@ -139,14 +139,14 @@ export const BookTocScreen = ({ setTab, selectedBook }) => {
                             )}
                             <h3 
                                 dir={isTitleUrdu ? "rtl" : "ltr"}
-                                className={`text-cream truncate ${isTitleUrdu ? 'font-indopak text-xl text-right' : 'font-display text-base text-left'}`}
+                                className={`text-cream w-full block ${isTitleUrdu ? 'font-urdu text-lg text-right overflow-hidden text-ellipsis whitespace-nowrap py-4 -my-4' : 'font-display text-xl text-left truncate max-w-[140px]'}`}
                             >
                                 {chapter.title}
                             </h3>
                             {chapter.subtitle && (
                                 <p 
                                     dir={containsUrdu(chapter.subtitle) ? "rtl" : "ltr"}
-                                    className={`text-sage text-[10px] tracking-widest uppercase mt-1 truncate ${containsUrdu(chapter.subtitle) ? 'font-indopak text-lg text-right' : 'font-display text-left'}`}
+                                    className={`text-sage text-[10px] tracking-widest uppercase ${containsUrdu(chapter.subtitle) ? 'font-urdu text-lg text-right' : 'font-display text-left'}`}
                                 >
                                     {chapter.subtitle}
                                 </p>
@@ -155,11 +155,10 @@ export const BookTocScreen = ({ setTab, selectedBook }) => {
                     </div>
                     
                     {chapter.urduSideTitle && (
-                        <span className="font-indopak text-xl text-cream opacity-80 ps-2 shrink-0 max-w-[120px] text-right truncate" dir="rtl">
+                        <span className="font-urdu text-lg text-cream opacity-80 ps-2 shrink-0 max-w-[120px] text-right overflow-hidden text-ellipsis whitespace-nowrap py-4 -my-4 block" dir="rtl">
                             {chapter.urduSideTitle}
                         </span>
                     )}
-                    <FiChevronRight className="text-gold text-xl ms-2 opacity-50 shrink-0" />
                 </div>
             </DoubleBezelCard>
         );
@@ -192,7 +191,7 @@ export const BookTocScreen = ({ setTab, selectedBook }) => {
         <div className="w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative z-20">
             
             {/* Top Header (Sticky Fade Mask) */}
-            <div className="w-full sticky top-0 z-[100] bg-gradient-to-b from-[#05110d] from-60% via-[#05110d]/90 to-transparent -mx-6 px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-6">
+            <div className="self-stretch sticky -top-10 z-[100] bg-gradient-to-b from-[#05110d] from-60% via-[#05110d]/90 to-transparent -mx-6 px-6 -mt-10 pt-[calc(5.5rem+env(safe-area-inset-top))] pb-6">
                 <div className="w-full">
                     <div className="flex items-center gap-3 mb-6">
                         <button onClick={goBack} className="w-10 h-10 rounded-full border border-cream/10 flex items-center justify-center text-sage hover:text-gold hover:border-gold/30 transition-all shadow-inner bg-emerald-dark shrink-0">

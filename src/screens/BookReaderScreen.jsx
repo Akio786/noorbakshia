@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import { hadithService } from '../services/hadithService';
 import { noorbakhshiaService } from '../services/noorbakhshiaService';
 import { NOORBAKHSHIA_BOOKS, HADITH_BOOKS, AWRADS } from '../data/libraryBooks';
-import { FiArrowLeft, FiSettings, FiLoader, FiAlertTriangle, FiX, FiChevronUp, FiChevronDown, FiChevronsUp, FiChevronsDown } from 'react-icons/fi';
+import { FiArrowLeft, FiSettings, FiLoader, FiAlertTriangle, FiX, FiChevronUp, FiChevronDown, FiChevronsUp, FiChevronsDown, FiCopy, FiShare2, FiCheck } from 'react-icons/fi';
 import { FaBookmark, FaRegBookmark, FaQuoteLeft, FaCircleCheck } from 'react-icons/fa6';
 
 export const BookReaderScreen = ({ setTab, selectedBook }) => {
@@ -37,6 +37,7 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
     const [isSoftLoading, setIsSoftLoading] = useState(false);
     const [error, setError] = useState(null);
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [copiedId, setCopiedId] = useState(null);
 
     // Tracking
     const [nextIndexToFetch, setNextIndexToFetch] = useState(resolvedBook?.chapterIndex || 0);
@@ -51,9 +52,37 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
 
     // Pill State
     const [navDirection, setNavDirection] = useState('down');
-    const [isNavVisible, setIsNavVisible] = useState(false);
+    const [isNavVisible, setIsNavVisible] = useState(true);
     const scrollTimeoutRef = useRef(null);
     const lastScrollY = useRef(0);
+
+    // Actions
+    const handleCopy = async (id, arabic, urdu, desc) => {
+        const parts = [arabic, urdu, desc].filter(p => p && p.trim() !== "");
+        const content = parts.join('\n\n');
+        try {
+            await navigator.clipboard.writeText(content);
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch (err) {
+            console.error('Failed to copy', err);
+        }
+    };
+
+    const handleShare = async (title, arabic, urdu, desc) => {
+        const parts = [title, arabic, urdu, desc, '- Noorbakhshia 365'].filter(p => p && p.trim() !== "");
+        const content = parts.join('\n\n');
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: title,
+                    text: content,
+                });
+            } catch (err) {
+                console.log('Error sharing', err);
+            }
+        }
+    };
 
     // 1. Initial Data Load
     useEffect(() => {
@@ -317,23 +346,12 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
             }
             
             lastScrollY.current = currentScrollY;
-            
-            setIsNavVisible(true);
-            
-            clearTimeout(scrollTimeoutRef.current);
-            scrollTimeoutRef.current = setTimeout(() => {
-                setIsNavVisible(false);
-            }, 2500);
         };
 
         scrollContainer.addEventListener('scroll', handlePillScroll, { passive: true });
         
-        setIsNavVisible(true);
-        scrollTimeoutRef.current = setTimeout(() => setIsNavVisible(false), 2500);
-
         return () => {
             scrollContainer.removeEventListener('scroll', handlePillScroll);
-            clearTimeout(scrollTimeoutRef.current);
         };
     }, [isNoorbakhshia, activeBlockIndex]);
 
@@ -354,7 +372,7 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                         const containerRect = container.getBoundingClientRect();
                         // Calculate offset relative to the container, centering the element
                         const scrollOffset = elementRect.top - containerRect.top + container.scrollTop - (container.clientHeight / 4);
-                        container.scrollTop = scrollOffset;
+                        container.scrollTo({ top: scrollOffset, behavior: 'smooth' });
                         hasScrolled.current = true;
                     });
                 });
@@ -415,7 +433,7 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
     };
 
     return (
-        <div id="book-scroll-container" className="w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative">
+        <div id="book-scroll-container" className="scroll-smooth w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative">
             
             {/* Header Sticky (Fade Mask) */}
             <div className="w-full sticky top-0 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent -mx-6 px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8">
@@ -455,7 +473,7 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                         <p className="font-display">{error}</p>
                     </div>
                 ) : (
-                    <div className="space-y-16">
+                    <div key={`chapter-${resolvedBook.chapterIndex}`} className="space-y-16 animate-fade-up">
                         {blocks.map((block) => (
                             <div 
                                 key={`block-${block.index}`}
@@ -536,20 +554,10 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                                                         key={`p-${pIdx}`}
                                                         id={`para-global-${globalId}`}
                                                         data-global-id={globalId}
-                                                        className="para-container relative animate-fade-up border-b border-cream/5 pb-10 mb-10 last:border-0 last:mb-0"
+                                                        className="para-container group border-b border-cream/5 pb-8 mb-8 last:border-0 last:mb-0"
                                                     >
-                                                        <div className="absolute top-0 start-0 w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center text-xs font-display text-gold bg-emerald-dark z-10 shadow-[0_0_10px_rgba(201,168,76,0.1)]">
-                                                            {para.paragraph_number || (pIdx + 1)}
-                                                        </div>
-
-                                                        <button 
-                                                            onClick={() => handleBookmarkPara(block.index, globalId, previewText)}
-                                                            className="absolute top-0 end-0 w-8 h-8 flex items-center justify-center text-sage/50 hover:text-gold transition-colors z-20"
-                                                        >
-                                                            {isParaBookmarked ? <FaBookmark className="text-xl text-gold" /> : <FaRegBookmark className="text-xl" />}
-                                                        </button>
-
-                                                        <div className="flex flex-col gap-6 ps-12 pe-10">
+                                                        {/* Content Area (Full Width) */}
+                                                        <div className="flex flex-col gap-6">
                                                             {hasArabic && (
                                                                 <div className="w-full text-right" dir="rtl">
                                                                     <p className="font-indopak text-cream" style={{ fontSize: `${quranSettings.arabicFontSize}px`, lineHeight: 2.2 }}>
@@ -571,13 +579,50 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                                                                     </p>
                                                                 </div>
                                                             )}
-                                                            {para.original_hadees_no && (
-                                                                <div className="border-t border-cream/5 pt-[calc(1rem+env(safe-area-inset-top))] mt-2 flex justify-between items-center">
+                                                        </div>
+
+                                                        {/* Footer Toolbar */}
+                                                        <div className="mt-6 flex items-center justify-between opacity-80 group-hover:opacity-100 transition-opacity">
+                                                            <div className="flex items-center gap-4">
+                                                                {/* Action (Bookmark) */}
+                                                                <button 
+                                                                    onClick={() => handleBookmarkPara(block.index, globalId, previewText)}
+                                                                    className="p-2 -ml-2 text-sage/40 hover:text-gold transition-colors flex items-center justify-center"
+                                                                >
+                                                                    {isParaBookmarked ? <FaBookmark className="text-lg text-gold" /> : <FaRegBookmark className="text-lg" />}
+                                                                </button>
+
+                                                                {/* Copy */}
+                                                                <button 
+                                                                    onClick={() => handleCopy(globalId, para.arabic_text, para.urdu_text, para.description)}
+                                                                    className="p-2 text-sage/40 hover:text-gold transition-colors flex items-center justify-center"
+                                                                    title="Copy text"
+                                                                >
+                                                                    {copiedId === globalId ? <FiCheck className="text-lg text-emerald-400" /> : <FiCopy className="text-lg" />}
+                                                                </button>
+
+                                                                {/* Share */}
+                                                                {navigator.share && (
+                                                                    <button 
+                                                                        onClick={() => handleShare(activeBlockTitle, para.arabic_text, para.urdu_text, para.description)}
+                                                                        className="p-2 text-sage/40 hover:text-gold transition-colors flex items-center justify-center"
+                                                                        title="Share"
+                                                                    >
+                                                                        <FiShare2 className="text-lg" />
+                                                                    </button>
+                                                                )}
+
+                                                                {para.original_hadees_no && (
                                                                     <span className="text-gold/80 text-[10px] uppercase tracking-widest font-bold">
                                                                         {para.original_hadees_no}
                                                                     </span>
-                                                                </div>
-                                                            )}
+                                                                )}
+                                                            </div>
+
+                                                            {/* Para Badge */}
+                                                            <div className="flex items-center justify-center w-6 h-6 rounded-full border border-gold/30 text-xs font-display text-gold bg-emerald-dark">
+                                                                {para.paragraph_number || (pIdx + 1)}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 );

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useApp } from '../AppContext';
 import { useStore } from '../store/useStore';
 import { quranService } from '../services/quranService';
-import { FiArrowLeft, FiSettings, FiLoader, FiAlertTriangle, FiX, FiChevronUp, FiChevronDown, FiChevronsUp, FiChevronsDown } from 'react-icons/fi';
+import { FiArrowLeft, FiSettings, FiLoader, FiAlertTriangle, FiX, FiChevronUp, FiChevronDown, FiChevronsUp, FiChevronsDown, FiCopy, FiShare2, FiCheck } from 'react-icons/fi';
 import { FaPalette, FaCircleCheck, FaBookmark, FaRegBookmark } from 'react-icons/fa6';
 
 export const QuranReader = ({ setTab, selectedBook }) => {
@@ -18,6 +18,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
     const [error, setError] = useState(null);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [legendOpen, setLegendOpen] = useState(false);
+    const [copiedId, setCopiedId] = useState(null);
     
     // Tracking scroll
     const [nextIdToFetch, setNextIdToFetch] = useState(selectedBook?.id);
@@ -31,9 +32,37 @@ export const QuranReader = ({ setTab, selectedBook }) => {
 
     // Pill State
     const [navDirection, setNavDirection] = useState('down');
-    const [isNavVisible, setIsNavVisible] = useState(false);
+    const [isNavVisible, setIsNavVisible] = useState(true);
     const scrollTimeoutRef = useRef(null);
     const lastScrollY = useRef(0);
+
+    // Actions
+    const handleCopy = async (id, text, translation) => {
+        const cleanText = quranService.stripTajweed(text);
+        const content = `${cleanText}\n\n${translation}`;
+        try {
+            await navigator.clipboard.writeText(content);
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch (err) {
+            console.error('Failed to copy', err);
+        }
+    };
+
+    const handleShare = async (title, text, translation) => {
+        const cleanText = quranService.stripTajweed(text);
+        const content = `${title}\n\n${cleanText}\n\n${translation}\n\n- Noorbakhshia 365`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: title,
+                    text: content,
+                });
+            } catch (err) {
+                console.log('Error sharing', err);
+            }
+        }
+    };
 
     // Reset state when selectedBook completely changes (e.g., jump via bookmark)
     useEffect(() => {
@@ -197,7 +226,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                         const elementRect = element.getBoundingClientRect();
                         const containerRect = container.getBoundingClientRect();
                         const scrollOffset = elementRect.top - containerRect.top + container.scrollTop - (container.clientHeight / 4);
-                        container.scrollTop = scrollOffset;
+                        container.scrollTo({ top: scrollOffset, behavior: 'smooth' });
                         hasScrolled.current = true;
                     });
                 });
@@ -277,23 +306,12 @@ export const QuranReader = ({ setTab, selectedBook }) => {
             }
             
             lastScrollY.current = currentScrollY;
-            
-            setIsNavVisible(true);
-            
-            clearTimeout(scrollTimeoutRef.current);
-            scrollTimeoutRef.current = setTimeout(() => {
-                setIsNavVisible(false);
-            }, 2500);
         };
 
         scrollContainer.addEventListener('scroll', handlePillScroll, { passive: true });
         
-        setIsNavVisible(true);
-        scrollTimeoutRef.current = setTimeout(() => setIsNavVisible(false), 2500);
-
         return () => {
             scrollContainer.removeEventListener('scroll', handlePillScroll);
-            clearTimeout(scrollTimeoutRef.current);
         };
     }, [activeBlockId]);
 
@@ -349,7 +367,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
     };
 
     return (
-        <div id="quran-scroll-container" className="w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative">
+        <div id="quran-scroll-container" className="scroll-smooth w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative">
             
             {/* Header Sticky (Fade Mask) */}
             <div className="w-full sticky top-0 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent -mx-6 px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8">
@@ -392,7 +410,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                         <p className="font-display">{error}</p>
                     </div>
                 ) : (
-                    <div className="space-y-16">
+                    <div key={`content-${selectedBook?.id}`} className="space-y-16 animate-fade-up">
                         {blocks.map((block) => {
                             const isJuz = readType === 'juz';
                             const title = isJuz ? `Juz ${block.data.number}` : block.data.englishName;
@@ -408,7 +426,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                     {/* Block Main Header (if not injected later) */}
                                     {!isJuz && block.data.number !== 1 && block.data.number !== 9 && (
                                         <div className="text-center mb-12 border-b border-cream/5 pb-12 animate-fade-down">
-                                            <p className="font-urdu text-4xl text-cream leading-[2.5] mb-4">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                                            <img src="/assets/bismillah.svg" alt="Bismillah" className="h-20 md:h-24 mx-auto mb-4 invert opacity-90 drop-shadow-[0_0_15px_rgba(201,168,76,0.2)]" />
                                         </div>
                                     )}
 
@@ -429,7 +447,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                                         <h3 className="font-display text-2xl text-gold mb-2">{verse.surah.englishName}</h3>
                                                         <p className="text-sage text-[10px] tracking-widest uppercase mb-6">Surah {verse.surah.number}</p>
                                                         {verse.surah.number !== 1 && verse.surah.number !== 9 && (
-                                                            <p className="font-urdu text-3xl text-cream leading-[2] mt-4 opacity-90">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                                                            <img src="/assets/bismillah.svg" alt="Bismillah" className="h-16 md:h-20 mx-auto mt-4 invert opacity-90 drop-shadow-[0_0_15px_rgba(201,168,76,0.2)]" />
                                                         )}
                                                     </div>
                                                 )}
@@ -439,21 +457,10 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                                     data-global-verse={globalId}
                                                     data-ayah-number={verse.numberInSurah}
                                                     data-surah-name={verse.surah?.englishName || title}
-                                                    className="ayah-container relative animate-fade-up border-b border-cream/5 pb-10 mb-10 last:border-0 last:mb-0"
+                                                    className="ayah-container group border-b border-cream/5 pb-8 mb-8 last:border-0 last:mb-0"
                                                 >
-                                                    {/* Golden Verse Number Marker */}
-                                                    <div className="absolute top-0 start-0 w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center text-xs font-display text-gold bg-emerald-dark z-10 shadow-[0_0_10px_rgba(201,168,76,0.1)]">
-                                                        {verse.numberInSurah}
-                                                    </div>
-
-                                                    <button 
-                                                        onClick={() => handleBookmarkPara(block.id, globalId, previewText)}
-                                                        className="absolute top-0 end-0 w-8 h-8 flex items-center justify-center text-sage/50 hover:text-gold transition-colors z-20"
-                                                    >
-                                                        {isVerseBookmarked ? <FaBookmark className="text-xl text-gold" /> : <FaRegBookmark className="text-xl" />}
-                                                    </button>
-
-                                                    <div className="flex flex-col gap-6 ps-12 pe-10">
+                                                    {/* Content Area (Full Width) */}
+                                                    <div className="flex flex-col gap-6">
                                                         {/* Arabic Text */}
                                                         <div className="w-full text-right" dir="rtl">
                                                             <p 
@@ -480,6 +487,45 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                                                 </p>
                                                             </div>
                                                         )}
+                                                    </div>
+
+                                                    {/* Footer Toolbar */}
+                                                    <div className="mt-6 flex items-center justify-between opacity-80 group-hover:opacity-100 transition-opacity">
+                                                        {/* Actions Group */}
+                                                        <div className="flex items-center gap-2">
+                                                            {/* Bookmark */}
+                                                            <button 
+                                                                onClick={() => handleBookmarkPara(block.id, globalId, previewText)}
+                                                                className="p-2 -ml-2 text-sage/40 hover:text-gold transition-colors flex items-center justify-center"
+                                                            >
+                                                                {isVerseBookmarked ? <FaBookmark className="text-lg text-gold" /> : <FaRegBookmark className="text-lg" />}
+                                                            </button>
+
+                                                            {/* Copy */}
+                                                            <button 
+                                                                onClick={() => handleCopy(globalId, verse.text, verse.translation)}
+                                                                className="p-2 text-sage/40 hover:text-gold transition-colors flex items-center justify-center"
+                                                                title="Copy text"
+                                                            >
+                                                                {copiedId === globalId ? <FiCheck className="text-lg text-emerald-400" /> : <FiCopy className="text-lg" />}
+                                                            </button>
+
+                                                            {/* Share (only if supported) */}
+                                                            {navigator.share && (
+                                                                <button 
+                                                                    onClick={() => handleShare(title || verse.surah?.englishName, verse.text, verse.translation)}
+                                                                    className="p-2 text-sage/40 hover:text-gold transition-colors flex items-center justify-center"
+                                                                    title="Share"
+                                                                >
+                                                                    <FiShare2 className="text-lg" />
+                                                                </button>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Ayah/Para Badge */}
+                                                        <div className="flex items-center justify-center w-6 h-6 rounded-full border border-gold/30 text-xs font-display text-gold bg-emerald-dark">
+                                                            {verse.numberInSurah}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </React.Fragment>
