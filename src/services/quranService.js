@@ -70,7 +70,7 @@ export const quranService = {
 
   getSurah: async (id, lang = 'en.sahih') => {
       const arabicData = await quranService._loadData('arabic');
-      const langType = lang === 'ur.junagarhi' ? 'urdu' : 'english';
+      const langType = lang.startsWith('ur') ? 'urdu' : 'english';
       const translationData = await quranService._loadData(langType);
 
       // Surah arrays are 0-indexed
@@ -95,7 +95,7 @@ export const quranService = {
 
   getJuz: async (id, lang = 'en.sahih') => {
       const arabicData = await quranService._loadData('arabic');
-      const langType = lang === 'ur.junagarhi' ? 'urdu' : 'english';
+      const langType = lang.startsWith('ur') ? 'urdu' : 'english';
       const translationData = await quranService._loadData(langType);
 
       // We must scan through all surahs and extract ayahs belonging to this Juz
