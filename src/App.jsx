@@ -22,10 +22,10 @@ import { SearchOverlay } from './screens/SearchOverlay';
 import { SplashScreen } from './screens/SplashScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { InstallPromptScreen } from './screens/InstallPromptScreen';
-import { LocationRequiredOverlay } from './components/LocationRequiredOverlay';
+import { LocationGateScreen } from './screens/LocationGateScreen';
 
 function App() {
-  const { currentTab, navigateTo, selectedBook, locationError, locationCoords } = useApp();
+  const { currentTab, navigateTo, selectedBook, locationGranted, locationDenied, locationCoords } = useApp();
   const { userName } = useStore();
   
   const hasSeenSplash = localStorage.getItem('has_seen_splash') === 'true';
@@ -78,6 +78,15 @@ function App() {
       );
   }
 
+  // Location Gate — block until GPS is available
+  if (locationDenied || (!locationGranted && !locationCoords)) {
+      return (
+          <div className="device-frame bg-[#05110d]">
+              <LocationGateScreen />
+          </div>
+      );
+  }
+
   return (
       <ErrorBoundary>
           <div className="device-frame">
@@ -102,8 +111,6 @@ function App() {
 
               {/* Overlays */}
               <SearchOverlay />
-              
-              {(!locationCoords && locationError) && <LocationRequiredOverlay />}
 
               {/* Bottom Navigation */}
               <div className="absolute bottom-0 left-0 right-0 z-50">

@@ -46,7 +46,7 @@ export const useStore = create(
       quranSettings: {
           arabicFontSize: 32, // pixels
           translationFontSize: 16, // pixels
-          translationLanguage: 'en.sahih', // Default English
+          translationLanguage: 'ur.jalandhry', // Default Urdu
           showTranslation: true
       },
       updateQuranSettings: (newSettings) => set((state) => ({
@@ -64,6 +64,16 @@ export const useStore = create(
     }),
     {
       name: 'noorbakhshia-app-storage', // unique name for localStorage key
+      version: 2, // bump to force migration
+      migrate: (persistedState, version) => {
+        if (version < 2) {
+          // Migrate: switch default translation from English to Urdu
+          if (persistedState.quranSettings?.translationLanguage === 'en.sahih') {
+            persistedState.quranSettings.translationLanguage = 'ur.jalandhry';
+          }
+        }
+        return persistedState;
+      }
     }
   )
 );

@@ -28,164 +28,127 @@ export const AppProvider = ({ children }) => {
         return saved ? JSON.parse(saved) : null;
     });
     const [locationError, setLocationError] = useState(false);
+    const [locationGranted, setLocationGranted] = useState(false);
+    const [locationDenied, setLocationDenied] = useState(false);
 
-    const requestLocationAccess = useCallback(() => {
-        return new Promise((resolve, reject) => {
-            if (!('geolocation' in navigator)) {
-                setLocationName('LOCATION OFF');
-                setLocationError(true);
-                reject(new Error('Geolocation not supported'));
-                return;
-            }
+    // Ref to track last geocoded coords (avoids stale closure in watchPosition callback)
+    const lastGeocodedRef = React.useRef(null);
+    const watchIdRef = React.useRef(null);
 
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    const { latitude, longitude } = position.coords;
-                    
-                    const latDiff = locationCoords ? Math.abs(locationCoords.lat - latitude) : 1;
-                    const lngDiff = locationCoords ? Math.abs(locationCoords.lng - longitude) : 1;
-                    
-                    if (latDiff > 0.01 || lngDiff > 0.01 || locationName === 'Locating...' || locationName === 'LOCATION OFF' || locationName === 'LOCATION ERROR') {
-                        try {
-                            const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
-                            if (!res.ok) throw new Error('Geocoding failed');
-                            const data = await res.json();
-                            
-                            const newLocationName = `${data.city || data.locality || 'Unknown'}, ${data.countryCode || 'XX'}`;
-                            
-                            setLocationName(newLocationName.toUpperCase());
-                            setLocationCoords({ lat: latitude, lng: longitude });
-                            setLocationError(false);
-                            
-                            localStorage.setItem('location_name', newLocationName.toUpperCase());
-                            localStorage.setItem('location_coords', JSON.stringify({ lat: latitude, lng: longitude }));
-                            resolve({ lat: latitude, lng: longitude });
-                        } catch (err) {
-                            console.error("Geocoding API error:", err);
-                            if (locationName === 'Locating...') {
-                                setLocationName('LOCATION ERROR');
-                                setLocationError(true);
-                            }
-                            // Even if geocoding fails, we have coords
-                            setLocationCoords({ lat: latitude, lng: longitude });
-                            setLocationError(false);
-                            localStorage.setItem('location_coords', JSON.stringify({ lat: latitude, lng: longitude }));
-                            resolve({ lat: latitude, lng: longitude });
-                        }
-                    } else {
-                        // We already have fresh enough coordinates
-                        setLocationError(false);
-                        resolve({ lat: latitude, lng: longitude });
-                    }
-                },
-                (error) => {
-                    console.warn("GPS Error, attempting IP fallback...", error);
-                    
-                    // Fallback to IP-based Geolocation
-                    fetch('https://api.bigdatacloud.net/data/reverse-geocode-client')
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.latitude && data.longitude) {
-                                const newLocationName = `${data.city || data.locality || 'Unknown'}, ${data.countryCode || 'XX'}`;
-                                setLocationName(newLocationName.toUpperCase());
-                                setLocationCoords({ lat: data.latitude, lng: data.longitude });
-                                setLocationError(false);
-                                
-                                localStorage.setItem('location_name', newLocationName.toUpperCase());
-                                localStorage.setItem('location_coords', JSON.stringify({ lat: data.latitude, lng: data.longitude }));
-                                resolve({ lat: data.latitude, lng: data.longitude });
-                            } else {
-                                throw new Error("Invalid IP Location data");
-                            }
-                        })
-                        .catch(async (fallbackErr) => {
-                            console.warn("Primary IP Fallback failed, trying GeoJS...", fallbackErr);
-                            try {
-                                const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
-                                const geoData = await geoRes.json();
-                                if (geoData.latitude && geoData.longitude) {
-                                    const newLocName = `${geoData.city || 'Unknown'}, ${geoData.country_code || 'XX'}`;
-                                    setLocationName(newLocName.toUpperCase());
-                                    setLocationCoords({ lat: parseFloat(geoData.latitude), lng: parseFloat(geoData.longitude) });
-                                    setLocationError(false);
-                                    localStorage.setItem('location_name', newLocName.toUpperCase());
-                                    localStorage.setItem('location_coords', JSON.stringify({ lat: parseFloat(geoData.latitude), lng: parseFloat(geoData.longitude) }));
-                                    resolve({ lat: parseFloat(geoData.latitude), lng: parseFloat(geoData.longitude) });
-                                } else {
-                                    throw new Error("Invalid GeoJS data");
-                                }
-                            } catch (secondErr) {
-                                console.error("All IP Fallbacks failed:", secondErr);
-                                setLocationName('LOCATION OFF');
-                                setLocationError(true);
-                                reject(error); // Reject with original GPS error for UI handling
-                            }
-                        });
-                },
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 }
-            );
-        });
-    }, [locationCoords, locationName]);
-
-    // Initial fetch
-    useEffect(() => {
-        // Only auto-fetch if we have cached coords or it's not the first run, 
-        // to prevent unexpected prompt before onboarding starts. 
-        // We let Onboarding trigger it if they don't have a username yet.
-        const savedUsername = localStorage.getItem('user_state');
-        if (savedUsername || locationCoords) {
-            requestLocationAccess().catch(() => {});
+    const startWatching = useCallback(() => {
+        if (!('geolocation' in navigator)) {
+            setLocationName('LOCATION OFF');
+            setLocationError(true);
+            setLocationDenied(true);
+            return;
         }
+
+        // Clear any existing watcher before starting a new one
+        if (watchIdRef.current !== null) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+        }
+
+        watchIdRef.current = navigator.geolocation.watchPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+                
+                setLocationGranted(true);
+                setLocationDenied(false);
+                setLocationError(false);
+
+                // Check if moved significantly (~1km) to avoid spamming geocoding API
+                const last = lastGeocodedRef.current;
+                const latDiff = last ? Math.abs(last.lat - latitude) : 1;
+                const lngDiff = last ? Math.abs(last.lng - longitude) : 1;
+                const currentName = localStorage.getItem('location_name') || 'Locating...';
+
+                if (latDiff > 0.01 || lngDiff > 0.01 || currentName === 'Locating...' || currentName === 'LOCATION OFF') {
+                    // Update coords immediately (prayer times don't need city name)
+                    setLocationCoords({ lat: latitude, lng: longitude });
+                    localStorage.setItem('location_coords', JSON.stringify({ lat: latitude, lng: longitude }));
+                    lastGeocodedRef.current = { lat: latitude, lng: longitude };
+
+                    try {
+                        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+                        if (!res.ok) throw new Error('Geocoding failed');
+                        const data = await res.json();
+                        
+                        const newLocationName = `${data.city || data.locality || 'Unknown'}, ${data.countryCode || 'XX'}`;
+                        
+                        setLocationName(newLocationName.toUpperCase());
+                        localStorage.setItem('location_name', newLocationName.toUpperCase());
+                    } catch (err) {
+                        console.error("Geocoding API error:", err);
+                        if (currentName === 'Locating...') {
+                            setLocationName('LOCATION ERROR');
+                        }
+                    }
+                } else {
+                    // Minor movement — just update raw coords for prayer accuracy
+                    setLocationCoords({ lat: latitude, lng: longitude });
+                    localStorage.setItem('location_coords', JSON.stringify({ lat: latitude, lng: longitude }));
+                }
+            },
+            (error) => {
+                console.error("GPS Error:", error);
+                if (error.code === 1) {
+                    // PERMISSION_DENIED
+                    setLocationDenied(true);
+                    setLocationGranted(false);
+                    setLocationName('LOCATION OFF');
+                    setLocationError(true);
+                } else if (error.code === 2) {
+                    // POSITION_UNAVAILABLE
+                    setLocationDenied(true);
+                    setLocationGranted(false);
+                    setLocationName('LOCATION OFF');
+                    setLocationError(true);
+                } else {
+                    // TIMEOUT — don't mark as denied, just error
+                    setLocationError(true);
+                    setLocationName('LOCATION OFF');
+                }
+            },
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+        );
     }, []);
 
-    // Permission and Visibility Watcher
+    // Callable from gate screen or settings to re-trigger permission
+    const requestLocation = useCallback(() => {
+        startWatching();
+    }, [startWatching]);
+
     useEffect(() => {
-        const checkLocationSilently = () => {
-            if ('geolocation' in navigator) {
-                // Perform a quick, silent check with a short timeout to see if permission was revoked
-                navigator.geolocation.getCurrentPosition(
-                    () => { setLocationError(false); },
-                    (error) => {
-                        if (error.code === error.PERMISSION_DENIED) {
-                            setLocationError(true);
-                            setLocationCoords(null);
-                            localStorage.removeItem('location_coords');
-                        }
-                    },
-                    { timeout: 5000, maximumAge: 60000 }
-                );
-            }
-        };
+        startWatching();
 
-        // Listen for browser tab visibility changes (great for iOS Safari fallback)
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
-                checkLocationSilently();
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        // Listen for explicit permission changes (Android/Chrome/Desktop)
-        if (navigator.permissions && navigator.permissions.query) {
-            navigator.permissions.query({ name: 'geolocation' }).then(status => {
-                status.onchange = () => {
+        // Listen for permission changes via Permissions API (mid-session revocation)
+        let permissionStatus = null;
+        if (navigator.permissions) {
+            navigator.permissions.query({ name: 'geolocation' }).then((status) => {
+                permissionStatus = status;
+                const handleChange = () => {
                     if (status.state === 'denied') {
+                        setLocationDenied(true);
+                        setLocationGranted(false);
+                        setLocationName('LOCATION OFF');
                         setLocationError(true);
-                        setLocationCoords(null);
-                        localStorage.removeItem('location_coords');
                     } else if (status.state === 'granted') {
-                        requestLocationAccess().catch(() => {});
+                        setLocationDenied(false);
+                        startWatching();
                     }
                 };
+                status.addEventListener('change', handleChange);
             }).catch(() => {
-                // navigator.permissions not supported (e.g. Safari), visibilitychange will handle it
+                // Permissions API not supported — watchPosition alone handles it
             });
         }
 
         return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            if (watchIdRef.current !== null) {
+                navigator.geolocation.clearWatch(watchIdRef.current);
+            }
         };
-    }, [requestLocationAccess]);
+    }, [startWatching]);
 
     const MAIN_TABS = ['home', 'calendar', 'library', 'compass', 'tasbeeh', 'profile'];
     
@@ -302,6 +265,9 @@ export const AppProvider = ({ children }) => {
         locationName,
         locationError,
         locationCoords,
+        locationGranted,
+        locationDenied,
+        requestLocation,
         installPrompt,
         installPwa
     };

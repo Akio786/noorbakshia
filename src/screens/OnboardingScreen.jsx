@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { useApp } from '../AppContext';
 
 const AVATARS = [
     { id: 'pattern1', icon: 'ph-mosque' },
@@ -12,49 +11,16 @@ const AVATARS = [
 
 export const OnboardingScreen = ({ onComplete }) => {
     const { setUserName, setUserAvatar } = useStore();
-    const { requestLocationAccess } = useApp();
     const [nameInput, setNameInput] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].id);
-    const [isLocating, setIsLocating] = useState(false);
-    const [locationErrorMsg, setLocationErrorMsg] = useState('');
 
-    const handleContinue = async (e) => {
+    const handleContinue = (e) => {
         e.preventDefault();
-        if (!nameInput.trim() || isLocating) return;
+        if (!nameInput.trim()) return;
         
-        setIsLocating(true);
-        setLocationErrorMsg('');
-        
-        try {
-            await requestLocationAccess();
-            // If location succeeds, complete onboarding
-            setUserName(nameInput.trim());
-            setUserAvatar(selectedAvatar);
-            onComplete();
-        } catch (err) {
-            console.error("Onboarding GPS Error:", err);
-            setIsLocating(false);
-            
-            let errorMsg = `Failed to get location: ${err?.message || 'Unknown error'}. `;
-            if (err && err.code) {
-                switch(err.code) {
-                    case 1: // PERMISSION_DENIED
-                        errorMsg = 'Browser permission denied. Please tap the lock icon in the URL bar and allow location.';
-                        break;
-                    case 2: // POSITION_UNAVAILABLE
-                        errorMsg = 'Device location is turned off. Please pull down your notification shade and turn on "Location" or "GPS".';
-                        break;
-                    case 3: // TIMEOUT
-                        errorMsg = 'Location request timed out. Please make sure you have a clear view of the sky or are connected to Wi-Fi, then try again.';
-                        break;
-                }
-            } else if (err && err.message === 'Geolocation not supported') {
-                 errorMsg = 'Your browser does not support geolocation.';
-            } else {
-                 errorMsg += ' Both GPS and IP-fallback failed. Please check your adblocker or internet connection.';
-            }
-            setLocationErrorMsg(errorMsg);
-        }
+        setUserName(nameInput.trim());
+        setUserAvatar(selectedAvatar);
+        onComplete();
     };
 
     return (
@@ -101,28 +67,13 @@ export const OnboardingScreen = ({ onComplete }) => {
                     </div>
 
                     {/* Submit Button */}
-                    <div className="flex flex-col gap-2">
-                        <button 
-                            type="submit"
-                            disabled={!nameInput.trim() || isLocating}
-                            className="w-full bg-gold text-forest font-display font-bold text-xl py-4 rounded-2xl mt-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cream hover:shadow-[0_0_20px_rgba(245,230,200,0.2)] flex items-center justify-center gap-2"
-                        >
-                            {isLocating ? (
-                                <>
-                                    <span className="w-5 h-5 border-2 border-forest/30 border-t-forest rounded-full animate-spin"></span>
-                                    Getting Location...
-                                </>
-                            ) : (
-                                "Begin Journey"
-                            )}
-                        </button>
-                        
-                        {locationErrorMsg && (
-                            <div className="text-rose-400 text-xs text-center mt-2 bg-rose-400/10 p-3 rounded-xl border border-rose-400/20">
-                                {locationErrorMsg}
-                            </div>
-                        )}
-                    </div>
+                    <button 
+                        type="submit"
+                        disabled={!nameInput.trim()}
+                        className="w-full bg-gold text-forest font-display font-bold text-xl py-4 rounded-2xl mt-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cream hover:shadow-[0_0_20px_rgba(245,230,200,0.2)]"
+                    >
+                        Begin Journey
+                    </button>
                 </form>
             </div>
         </div>

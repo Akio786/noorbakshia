@@ -17,9 +17,13 @@ export const usePrayerTimes = () => {
             return;
         }
 
-        // Fallback coordinates (Skardu, PK) if GPS is denied/unavailable
-        const coords = locationCoords || { lat: 35.2971, lng: 75.6333 };
-        const coordinates = new Coordinates(coords.lat, coords.lng);
+        // Safety net: if no coords yet, stay in loading state (gate screen prevents this)
+        if (!locationCoords) {
+            setIsLoading(true);
+            return;
+        }
+
+        const coordinates = new Coordinates(locationCoords.lat, locationCoords.lng);
         
         // Dynamic Calculation Method from Settings
         const methodKey = prayerSettings?.calculationMethod || 'Karachi';
