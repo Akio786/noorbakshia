@@ -49,22 +49,8 @@ export const OnboardingScreen = ({ onComplete }) => {
                         />
                     </div>
 
-                    {/* Avatar Selection */}
-                    <div className="flex flex-col gap-3">
-                        <label className="text-xs text-sage uppercase tracking-widest ps-2">Choose an Icon</label>
-                        <div className="flex justify-between items-center bg-[#071510] border border-cream/5 rounded-2xl p-4">
-                            {AVATARS.map(avatar => (
-                                <button 
-                                    key={avatar.id}
-                                    type="button"
-                                    onClick={() => setSelectedAvatar(avatar.id)}
-                                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${selectedAvatar === avatar.id ? 'bg-gold text-forest shadow-[0_0_15px_rgba(201,168,76,0.3)]' : 'bg-emerald-dark text-sage hover:text-cream border border-transparent hover:border-cream/10'}`}
-                                >
-                                    <i className={`ph-fill ${avatar.icon} text-2xl`}></i>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+
+
 
                     {/* Submit Button */}
                     <button 
