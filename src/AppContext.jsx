@@ -84,7 +84,7 @@ export const AppProvider = ({ children }) => {
                     setLocationError(true);
                     reject(error);
                 },
-                { timeout: 10000, maximumAge: 60000 }
+                { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 }
             );
         });
     }, [locationCoords, locationName]);

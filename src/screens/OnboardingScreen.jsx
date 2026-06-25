@@ -32,9 +32,24 @@ export const OnboardingScreen = ({ onComplete }) => {
             setUserAvatar(selectedAvatar);
             onComplete();
         } catch (err) {
-            console.error(err);
+            console.error("Onboarding GPS Error:", err);
             setIsLocating(false);
-            setLocationErrorMsg('Location access is required for accurate prayer times. Please allow location access to continue.');
+            
+            let errorMsg = 'Location access is required for accurate prayer times. Please allow location access to continue.';
+            if (err && err.code) {
+                switch(err.code) {
+                    case 1: // PERMISSION_DENIED
+                        errorMsg = 'Browser permission denied. Please tap the lock icon in the URL bar and allow location.';
+                        break;
+                    case 2: // POSITION_UNAVAILABLE
+                        errorMsg = 'Device location is turned off. Please pull down your notification shade and turn on "Location" or "GPS".';
+                        break;
+                    case 3: // TIMEOUT
+                        errorMsg = 'Location request timed out. Please make sure you have a clear view of the sky or are connected to Wi-Fi, then try again.';
+                        break;
+                }
+            }
+            setLocationErrorMsg(errorMsg);
         }
     };
 
