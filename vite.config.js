@@ -12,7 +12,7 @@ export default defineConfig({
         name: 'Noorbakhshia 365',
         short_name: 'Noorbakhshia',
         description: 'Islamic spiritual app for the Noorbakhshia community',
-        theme_color: '#0A1F18',
+        theme_color: '#05110d',
         background_color: '#05110d',
         display: 'standalone',
         icons: [

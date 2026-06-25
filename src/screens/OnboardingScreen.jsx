@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
+import { useApp } from '../AppContext';
 
 const AVATARS = [
     { id: 'pattern1', icon: 'ph-mosque' },
@@ -11,16 +12,30 @@ const AVATARS = [
 
 export const OnboardingScreen = ({ onComplete }) => {
     const { setUserName, setUserAvatar } = useStore();
+    const { requestLocationAccess } = useApp();
     const [nameInput, setNameInput] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].id);
+    const [isLocating, setIsLocating] = useState(false);
+    const [locationErrorMsg, setLocationErrorMsg] = useState('');
 
-    const handleContinue = (e) => {
+    const handleContinue = async (e) => {
         e.preventDefault();
-        if (!nameInput.trim()) return;
+        if (!nameInput.trim() || isLocating) return;
         
-        setUserName(nameInput.trim());
-        setUserAvatar(selectedAvatar);
-        onComplete();
+        setIsLocating(true);
+        setLocationErrorMsg('');
+        
+        try {
+            await requestLocationAccess();
+            // If location succeeds, complete onboarding
+            setUserName(nameInput.trim());
+            setUserAvatar(selectedAvatar);
+            onComplete();
+        } catch (err) {
+            console.error(err);
+            setIsLocating(false);
+            setLocationErrorMsg('Location access is required for accurate prayer times. Please allow location access to continue.');
+        }
     };
 
     return (
@@ -67,13 +82,28 @@ export const OnboardingScreen = ({ onComplete }) => {
                     </div>
 
                     {/* Submit Button */}
-                    <button 
-                        type="submit"
-                        disabled={!nameInput.trim()}
-                        className="w-full bg-gold text-forest font-display font-bold text-xl py-4 rounded-2xl mt-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cream hover:shadow-[0_0_20px_rgba(245,230,200,0.2)]"
-                    >
-                        Begin Journey
-                    </button>
+                    <div className="flex flex-col gap-2">
+                        <button 
+                            type="submit"
+                            disabled={!nameInput.trim() || isLocating}
+                            className="w-full bg-gold text-forest font-display font-bold text-xl py-4 rounded-2xl mt-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cream hover:shadow-[0_0_20px_rgba(245,230,200,0.2)] flex items-center justify-center gap-2"
+                        >
+                            {isLocating ? (
+                                <>
+                                    <span className="w-5 h-5 border-2 border-forest/30 border-t-forest rounded-full animate-spin"></span>
+                                    Getting Location...
+                                </>
+                            ) : (
+                                "Begin Journey"
+                            )}
+                        </button>
+                        
+                        {locationErrorMsg && (
+                            <div className="text-rose-400 text-xs text-center mt-2 bg-rose-400/10 p-3 rounded-xl border border-rose-400/20">
+                                {locationErrorMsg}
+                            </div>
+                        )}
+                    </div>
                 </form>
             </div>
         </div>

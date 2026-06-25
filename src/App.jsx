@@ -22,9 +22,10 @@ import { SearchOverlay } from './screens/SearchOverlay';
 import { SplashScreen } from './screens/SplashScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { InstallPromptScreen } from './screens/InstallPromptScreen';
+import { LocationRequiredOverlay } from './components/LocationRequiredOverlay';
 
 function App() {
-  const { currentTab, navigateTo, selectedBook } = useApp();
+  const { currentTab, navigateTo, selectedBook, locationError, locationCoords } = useApp();
   const { userName } = useStore();
   
   const hasSeenSplash = localStorage.getItem('has_seen_splash') === 'true';
@@ -101,6 +102,8 @@ function App() {
 
               {/* Overlays */}
               <SearchOverlay />
+              
+              {(!locationCoords && locationError) && <LocationRequiredOverlay />}
 
               {/* Bottom Navigation */}
               <div className="absolute bottom-0 left-0 right-0 z-50">
