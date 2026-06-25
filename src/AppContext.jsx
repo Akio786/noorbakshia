@@ -98,11 +98,28 @@ export const AppProvider = ({ children }) => {
                                 throw new Error("Invalid IP Location data");
                             }
                         })
-                        .catch(fallbackErr => {
-                            console.error("IP Fallback Error:", fallbackErr);
-                            setLocationName('LOCATION OFF');
-                            setLocationError(true);
-                            reject(error); // Reject with original GPS error for UI handling
+                        .catch(async (fallbackErr) => {
+                            console.warn("Primary IP Fallback failed, trying GeoJS...", fallbackErr);
+                            try {
+                                const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+                                const geoData = await geoRes.json();
+                                if (geoData.latitude && geoData.longitude) {
+                                    const newLocName = `${geoData.city || 'Unknown'}, ${geoData.country_code || 'XX'}`;
+                                    setLocationName(newLocName.toUpperCase());
+                                    setLocationCoords({ lat: parseFloat(geoData.latitude), lng: parseFloat(geoData.longitude) });
+                                    setLocationError(false);
+                                    localStorage.setItem('location_name', newLocName.toUpperCase());
+                                    localStorage.setItem('location_coords', JSON.stringify({ lat: parseFloat(geoData.latitude), lng: parseFloat(geoData.longitude) }));
+                                    resolve({ lat: parseFloat(geoData.latitude), lng: parseFloat(geoData.longitude) });
+                                } else {
+                                    throw new Error("Invalid GeoJS data");
+                                }
+                            } catch (secondErr) {
+                                console.error("All IP Fallbacks failed:", secondErr);
+                                setLocationName('LOCATION OFF');
+                                setLocationError(true);
+                                reject(error); // Reject with original GPS error for UI handling
+                            }
                         });
                 },
                 { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 }

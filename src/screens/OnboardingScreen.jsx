@@ -35,7 +35,7 @@ export const OnboardingScreen = ({ onComplete }) => {
             console.error("Onboarding GPS Error:", err);
             setIsLocating(false);
             
-            let errorMsg = 'Location access is required for accurate prayer times. Please allow location access to continue.';
+            let errorMsg = `Failed to get location: ${err?.message || 'Unknown error'}. `;
             if (err && err.code) {
                 switch(err.code) {
                     case 1: // PERMISSION_DENIED
@@ -48,6 +48,10 @@ export const OnboardingScreen = ({ onComplete }) => {
                         errorMsg = 'Location request timed out. Please make sure you have a clear view of the sky or are connected to Wi-Fi, then try again.';
                         break;
                 }
+            } else if (err && err.message === 'Geolocation not supported') {
+                 errorMsg = 'Your browser does not support geolocation.';
+            } else {
+                 errorMsg += ' Both GPS and IP-fallback failed. Please check your adblocker or internet connection.';
             }
             setLocationErrorMsg(errorMsg);
         }
