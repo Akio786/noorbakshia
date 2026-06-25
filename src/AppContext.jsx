@@ -79,10 +79,31 @@ export const AppProvider = ({ children }) => {
                     }
                 },
                 (error) => {
-                    console.error("GPS Error:", error);
-                    setLocationName('LOCATION OFF');
-                    setLocationError(true);
-                    reject(error);
+                    console.warn("GPS Error, attempting IP fallback...", error);
+                    
+                    // Fallback to IP-based Geolocation
+                    fetch('https://api.bigdatacloud.net/data/reverse-geocode-client')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.latitude && data.longitude) {
+                                const newLocationName = `${data.city || data.locality || 'Unknown'}, ${data.countryCode || 'XX'}`;
+                                setLocationName(newLocationName.toUpperCase());
+                                setLocationCoords({ lat: data.latitude, lng: data.longitude });
+                                setLocationError(false);
+                                
+                                localStorage.setItem('location_name', newLocationName.toUpperCase());
+                                localStorage.setItem('location_coords', JSON.stringify({ lat: data.latitude, lng: data.longitude }));
+                                resolve({ lat: data.latitude, lng: data.longitude });
+                            } else {
+                                throw new Error("Invalid IP Location data");
+                            }
+                        })
+                        .catch(fallbackErr => {
+                            console.error("IP Fallback Error:", fallbackErr);
+                            setLocationName('LOCATION OFF');
+                            setLocationError(true);
+                            reject(error); // Reject with original GPS error for UI handling
+                        });
                 },
                 { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 }
             );
