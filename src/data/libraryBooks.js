@@ -4,10 +4,10 @@ import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { RiPlantFill } from 'react-icons/ri';
 
 export const NOORBAKHSHIA_BOOKS = [
-    { id: 'fiqh-e-ahwat', title: "Fiqh-e-Ahwat", urduTitle: "فقہ احوط", subtitle: "Jurisprudence", author: "Shah Syed Muhammad Nurbakhsh", isNoorbakhshia: true, Icon: FaScaleBalanced },
-    { id: 'chehl-hadees', title: "Mawadat Al-Qirbi", urduTitle: "مودة القربي", subtitle: "Forty Hadiths", author: "Mir Sayyid Ali Hamadani", isNoorbakhshia: true, Icon: FaBookOpen },
-    { id: 'kitab-al-aetiqadia', title: "Kitab Al-Aetiqadia", urduTitle: "کتاب الاعتقادیہ", subtitle: "Theology & Beliefs", author: "Shah Syed Muhammad Nurbakhsh", isNoorbakhshia: true, Icon: GiOpenBook },
-    { id: 'dawat-shareef', title: "Dawat Shareef", urduTitle: "دعوات صوفیہ", subtitle: "Spiritual Invitations", author: "Various Authors", isNoorbakhshia: true, Icon: FaScroll },
+    { id: 'fiqh-e-ahwat', title: "Fiqh e Ahwat", urduTitle: "فقہ احوط", subtitle: "Jurisprudence", author: "Shah Syed Muhammad Nurbakhsh", isNoorbakhshia: true, Icon: FaScaleBalanced },
+    { id: 'chehl-hadees', title: "Mawadat Al Qirbi", urduTitle: "مودة القربي", subtitle: "Forty Hadiths", author: "Mir Sayyid Ali Hamadani", isNoorbakhshia: true, Icon: FaBookOpen },
+    { id: 'kitab-al-aetiqadia', title: "Al Aetiqadia", urduTitle: "الاعتقادیہ", subtitle: "Theology & Beliefs", author: "Shah Syed Muhammad Nurbakhsh", isNoorbakhshia: true, Icon: GiOpenBook },
+    { id: 'dawat-shareef', title: "Dawat Shareef", urduTitle: "دعوات", subtitle: "Spiritual Invitations", author: "Various Authors", isNoorbakhshia: true, Icon: FaScroll },
     { id: 'awrad', title: "Awrad", urduTitle: "اوراد", subtitle: "Daily Supplications", author: "Various Authors", isNoorbakhshia: true, Icon: FaHandsPraying }
 ];
 

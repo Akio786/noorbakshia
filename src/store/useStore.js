@@ -47,7 +47,8 @@ export const useStore = create(
           arabicFontSize: 32, // pixels
           translationFontSize: 16, // pixels
           translationLanguage: 'ur.jalandhry', // Default Urdu
-          showTranslation: true
+          showTranslation: true,
+          showArabic: true
       },
       updateQuranSettings: (newSettings) => set((state) => ({
           quranSettings: { ...state.quranSettings, ...newSettings }

@@ -457,18 +457,20 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                                     data-global-verse={globalId}
                                                     data-ayah-number={verse.numberInSurah}
                                                     data-surah-name={verse.surah?.englishName || title}
-                                                    className="ayah-container group border-b border-cream/5 pb-8 mb-8 last:border-0 last:mb-0"
+                                                    className="ayah-container group mb-8 last:mb-0 transition-all duration-300 bg-[#071510] rounded-[2rem] p-6 md:p-8 shadow-sm border border-cream/5"
                                                 >
                                                     {/* Content Area (Full Width) */}
                                                     <div className="flex flex-col gap-6">
                                                         {/* Arabic Text */}
-                                                        <div className="w-full text-right" dir="rtl">
-                                                            <p 
-                                                                className="font-indopak text-cream" 
-                                                                style={{ fontSize: `${quranSettings.arabicFontSize}px`, lineHeight: 2 }}
-                                                                dangerouslySetInnerHTML={{ __html: quranService.parseTajweed(verse.text) }}
-                                                            />
-                                                        </div>
+                                                        {quranSettings.showArabic && (
+                                                            <div className="w-full text-right" dir="rtl">
+                                                                <p 
+                                                                    className="font-indopak text-cream" 
+                                                                    style={{ fontSize: `${quranSettings.arabicFontSize}px`, lineHeight: 2 }}
+                                                                    dangerouslySetInnerHTML={{ __html: quranService.parseTajweed(verse.text) }}
+                                                                />
+                                                            </div>
+                                                        )}
 
                                                         {/* Translation Text */}
                                                         {quranSettings.showTranslation && (
@@ -597,6 +599,31 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                             <button onClick={() => setSettingsOpen(false)} className="text-sage hover:text-cream">
                                 <FiX className="text-xl" />
                             </button>
+                        </div>
+
+                        {/* Reading Mode Select */}
+                        <div className="mb-6">
+                            <label className="text-[10px] text-sage uppercase tracking-widest font-semibold mb-3 block">Reading Mode</label>
+                            <div className="flex gap-2 p-1 bg-emerald-dark rounded-xl border border-cream/5">
+                                <button 
+                                    onClick={() => updateQuranSettings({ showArabic: true, showTranslation: false })}
+                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${quranSettings.showArabic && !quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                >
+                                    Arabic
+                                </button>
+                                <button 
+                                    onClick={() => updateQuranSettings({ showArabic: true, showTranslation: true })}
+                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${quranSettings.showArabic && quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                >
+                                    Both
+                                </button>
+                                <button 
+                                    onClick={() => updateQuranSettings({ showArabic: false, showTranslation: true })}
+                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${!quranSettings.showArabic && quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                >
+                                    Translation
+                                </button>
+                            </div>
                         </div>
 
                         {/* Translation Select */}

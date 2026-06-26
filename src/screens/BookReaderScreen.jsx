@@ -500,7 +500,7 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                                             key={`h-${hIdx}`}
                                             id={`para-global-${globalId}`}
                                             data-global-id={globalId}
-                                            className="para-container bg-emerald-dark p-6 rounded-3xl border border-cream/10 relative shadow-lg mb-8 animate-fade-up"
+                                            className="para-container relative mb-8 animate-fade-up transition-all duration-300 bg-[#071510] rounded-[2rem] p-6 md:p-8 shadow-sm border border-cream/5"
                                         >
                                             <FaQuoteLeft className="text-4xl text-gold/20 absolute top-4 start-4 pointer-events-none" />
                                             
@@ -512,12 +512,12 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                                             </button>
 
                                             <div className="mt-6 mb-6">
-                                            {hadith.arabic && (
+                                            {hadith.arabic && quranSettings.showArabic && (
                                                 <p className="font-indopak text-cream leading-[2.5] text-right mb-6" dir="rtl" style={{ fontSize: `${quranSettings.arabicFontSize}px` }}>
                                                     {hadith.arabic}
                                                 </p>
                                             )}
-                                            {hadith.english && (
+                                            {hadith.english && quranSettings.showTranslation && (
                                                 <p className="font-body text-sage leading-loose relative z-10" style={{ fontSize: `${quranSettings.translationFontSize}px` }}>
                                                     {hadith.english}
                                                 </p>
@@ -540,7 +540,7 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                                                 <h4 className="font-urdu text-2xl text-gold m-0">{topic.topic_name_ur}</h4>
                                             </div>
                                         )}
-                                        <div className="space-y-0">
+                                        <div>
                                             {topic.paragraphs?.map((para, pIdx) => {
                                                 const globalId = `n${block.index}-${tIdx}-${pIdx}`;
                                                 const isParaBookmarked = bookmarks.some(b => b.bookId === `${selectedBook.id}-${globalId}`);
@@ -554,25 +554,25 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                                                         key={`p-${pIdx}`}
                                                         id={`para-global-${globalId}`}
                                                         data-global-id={globalId}
-                                                        className="para-container group border-b border-cream/5 pb-8 mb-8 last:border-0 last:mb-0"
+                                                        className="para-container group mb-8 last:mb-0 transition-all duration-300 bg-[#071510] rounded-[2rem] p-6 md:p-8 shadow-sm border border-cream/5"
                                                     >
                                                         {/* Content Area (Full Width) */}
                                                         <div className="flex flex-col gap-6">
-                                                            {hasArabic && (
+                                                            {hasArabic && quranSettings.showArabic && (
                                                                 <div className="w-full text-right" dir="rtl">
                                                                     <p className="font-indopak text-cream" style={{ fontSize: `${quranSettings.arabicFontSize}px`, lineHeight: 2.2 }}>
                                                                         {para.arabic_text}
                                                                     </p>
                                                                 </div>
                                                             )}
-                                                            {hasUrdu && (
+                                                            {hasUrdu && quranSettings.showTranslation && (
                                                                 <div className="w-full text-right" dir="rtl">
                                                                     <p className="font-urdu leading-[2.5] font-light text-sage" style={{ fontSize: `${quranSettings.translationFontSize}px` }}>
                                                                         {para.urdu_text}
                                                                     </p>
                                                                 </div>
                                                             )}
-                                                            {hasDesc && (
+                                                            {hasDesc && quranSettings.showTranslation && (
                                                                 <div className={`w-full text-right ${hasArabic || hasUrdu ? 'pt-6 border-t border-cream/5' : ''}`} dir="rtl">
                                                                     <p className="font-urdu leading-[2.5] font-light text-sage" style={{ fontSize: `${quranSettings.translationFontSize}px` }}>
                                                                         {para.description}
@@ -709,6 +709,31 @@ export const BookReaderScreen = ({ setTab, selectedBook }) => {
                             <button onClick={() => setSettingsOpen(false)} className="text-sage hover:text-cream">
                                 <FiX className="text-xl" />
                             </button>
+                        </div>
+
+                        {/* Reading Mode Select */}
+                        <div className="mb-8">
+                            <label className="text-[10px] text-sage uppercase tracking-widest font-semibold mb-3 block">Reading Mode</label>
+                            <div className="flex gap-2 p-1 bg-emerald-dark rounded-xl border border-cream/5">
+                                <button 
+                                    onClick={() => updateQuranSettings({ showArabic: true, showTranslation: false })}
+                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${quranSettings.showArabic && !quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                >
+                                    Arabic
+                                </button>
+                                <button 
+                                    onClick={() => updateQuranSettings({ showArabic: true, showTranslation: true })}
+                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${quranSettings.showArabic && quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                >
+                                    Both
+                                </button>
+                                <button 
+                                    onClick={() => updateQuranSettings({ showArabic: false, showTranslation: true })}
+                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${!quranSettings.showArabic && quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                >
+                                    Translation
+                                </button>
+                            </div>
                         </div>
 
                         {/* Arabic Size Slider */}

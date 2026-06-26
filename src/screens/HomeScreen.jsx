@@ -176,19 +176,35 @@ export const HomeScreen = ({ setTab }) => {
                             <FiChevronRight className="text-xs" />
                         </div>
                     </div>
-                    <div className="flex gap-4 overflow-x-auto hide-scroll pb-2 -mx-6 px-6 snap-x">
-                        {upcomingEvents.map((event) => (
-                            <div 
-                                key={event.id} 
-                                className="snap-center shrink-0 w-[140px] p-3 rounded-2xl bg-[#05110d] border border-cream/5 cursor-pointer hover:border-gold/30 transition-colors"
-                                onClick={() => navigateTo('calendar')}
-                            >
-                                <h4 className="font-display text-cream text-md truncate">{event.title}</h4>
-                                <span className="text-[9px] text-sage uppercase tracking-widest block truncate">
-                                    {event.calculatedDate.format('iD iMMMM')}
-                                </span>
-                            </div>
-                        ))}
+                    <div className="flex flex-col gap-3 mt-4">
+                        {upcomingEvents.map((event) => {
+                            const hijriDay = event.calculatedDate.format('iD');
+                            const hijriMonth = event.calculatedDate.format('iMMMM');
+                            
+                            return (
+                                <div 
+                                    key={event.id} 
+                                    className="group flex items-center justify-between p-3 pl-4 rounded-[1.5rem] bg-black/20 border border-white/5 hover:border-gold/20 hover:bg-black/40 transition-all duration-500 cursor-pointer shadow-sm"
+                                    onClick={() => navigateTo('calendar')}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        {/* Date Badge */}
+                                        <div className="w-12 h-12 rounded-[1rem] bg-emerald-dark/80 border border-cream/10 flex items-center justify-center shrink-0 group-hover:scale-[1.05] transition-transform duration-500 ease-fluid shadow-inner">
+                                            <span className="font-display text-gold text-xl leading-none">{hijriDay}</span>
+                                        </div>
+                                        {/* Event Info */}
+                                        <div className="flex flex-col justify-center">
+                                            <h4 className="font-display text-cream text-[15px] leading-tight group-hover:text-gold transition-colors">{event.title}</h4>
+                                            <span className="text-[10px] text-sage uppercase tracking-widest mt-1">{hijriMonth}</span>
+                                        </div>
+                                    </div>
+                                    {/* Action Icon */}
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sage group-hover:bg-gold/10 group-hover:text-gold group-hover:translate-x-1 transition-all duration-500 ease-fluid shrink-0 mr-1">
+                                        <FiChevronRight className="text-sm" />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </DoubleBezelCard>
             </div>
