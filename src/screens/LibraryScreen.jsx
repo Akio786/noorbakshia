@@ -30,9 +30,9 @@ export const LibraryScreen = ({ setTab, setSelectedBook }) => {
                 {/* Section 1: Al-Quran (Hero) */}
                 <div className="w-full animate-fade-up">
                     <h3 className="text-[10px] text-sage uppercase tracking-[0.3em] mb-3 px-2 font-semibold">Divine Revelation</h3>
-                    <div onClick={() => setTab('quran')} className="w-full bg-forest border border-cream/10 rounded-[2rem] p-6 flex items-center gap-5 cursor-pointer hover:border-gold/30 transition-colors shadow-lg relative overflow-hidden group">
+                    <div onClick={() => setTab('quran')} className="w-full bg-white/5 border border-cream/10 rounded-[2rem] p-6 flex items-center gap-5 cursor-pointer hover:bg-white/10 hover:border-gold/30 transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] relative overflow-hidden group">
                         <div className="absolute -right-10 -bottom-10 text-[150px] text-gold opacity-[0.03] group-hover:opacity-[0.05] transition-opacity font-display">Q</div>
-                        <div className="w-16 h-16 rounded-2xl bg-emerald-dark border border-cream/5 flex items-center justify-center text-gold text-3xl shadow-inner relative z-10 shrink-0">
+                        <div className="w-16 h-16 rounded-2xl bg-gold/5 border border-gold/10 flex items-center justify-center text-gold text-3xl shadow-inner relative z-10 shrink-0">
                             <FaBookQuran />
                         </div>
                         <div className="relative z-10 flex-1 flex justify-between items-center pr-2">
@@ -57,12 +57,12 @@ export const LibraryScreen = ({ setTab, setSelectedBook }) => {
                                 onClick={() => {
                                     setSelectedBook(book);
                                 }} 
-                                className="w-full bg-forest border border-cream/10 rounded-[2rem] p-6 flex items-center gap-5 cursor-pointer hover:border-gold/30 transition-colors shadow-lg relative overflow-hidden group"
+                                className="w-full bg-white/5 border border-cream/10 rounded-[2rem] p-6 flex items-center gap-5 cursor-pointer hover:bg-white/10 hover:border-gold/30 transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] relative overflow-hidden group"
                             >
                                 <div className="absolute -right-10 -bottom-10 text-[150px] text-gold opacity-[0.03] group-hover:opacity-[0.05] transition-opacity font-display">
                                     {book.title.charAt(0)}
                                 </div>
-                                <div className="w-16 h-16 rounded-2xl bg-emerald-dark border border-cream/5 flex items-center justify-center text-gold text-3xl shadow-inner relative z-10 shrink-0">
+                                <div className="w-16 h-16 rounded-2xl bg-gold/5 border border-gold/10 flex items-center justify-center text-gold text-3xl shadow-inner relative z-10 shrink-0">
                                     <book.Icon />
                                 </div>
                                 <div className="relative z-10 flex-1 flex justify-between items-center pr-2">

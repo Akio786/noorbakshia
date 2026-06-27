@@ -211,7 +211,7 @@ export const BookTocScreen = ({ setTab, selectedBook }) => {
                             placeholder="Search chapters..." 
                             value={searchQuery}
                             onChange={handleSearchChange}
-                            className="w-full bg-emerald-dark/50 border border-cream/10 rounded-2xl py-3 ps-12 pe-4 text-cream font-body text-sm focus:outline-none focus:border-gold/30 placeholder-sage/50 shadow-inner"
+                            className="w-full bg-white/5 border border-cream/10 rounded-2xl py-3 ps-12 pe-4 text-cream font-body text-sm focus:outline-none focus:border-gold/30 placeholder-sage/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
                         />
                     </div>
 

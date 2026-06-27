@@ -78,7 +78,7 @@ export const SearchOverlay = () => {
             <div className="w-full h-full bg-[#05110d] animate-slide-up flex flex-col relative">
                 
                 {/* Search Header */}
-                <div className="w-full px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-4 border-b border-cream/5 flex items-center gap-4 bg-emerald-dark/50">
+                <div className="w-full px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-4 border-b border-cream/5 flex items-center gap-4 bg-white/[0.03]">
                     <button onClick={() => setSearchOpen(false)} className="text-sage hover:text-gold transition-colors">
                         <FiArrowLeft className="text-2xl" />
                     </button>
@@ -90,7 +90,7 @@ export const SearchOverlay = () => {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search Quran, Hadith, Fatawa..." 
-                            className="w-full bg-[#071510] border border-cream/10 rounded-full py-3 ps-12 pe-10 text-cream font-body focus:outline-none focus:border-gold/50 transition-colors placeholder:text-sage/50"
+                            className="w-full bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/10 rounded-full py-3 ps-12 pe-10 text-cream font-body focus:outline-none focus:border-gold/50 transition-colors placeholder:text-sage/50"
                         />
                         {query && (
                             <button onClick={() => setQuery('')} className="absolute end-4 top-1/2 -translate-y-1/2 text-sage hover:text-cream">
@@ -107,7 +107,7 @@ export const SearchOverlay = () => {
                             <span className="text-[10px] uppercase tracking-widest text-sage mb-4 block">Quick Links</span>
                             <div className="flex flex-wrap gap-2">
                                 {['Surah Ya-Seen', 'Dua Kumayl', 'Tasbeeh Counter', 'Fiqh Ul Ahwat'].map(tag => (
-                                    <button key={tag} onClick={() => setQuery(tag)} className="px-4 py-2 rounded-full border border-cream/5 bg-emerald-dark text-sage text-xs hover:border-gold/30 hover:text-cream transition-colors">
+                                    <button key={tag} onClick={() => setQuery(tag)} className="px-4 py-2 rounded-full border border-cream/5 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] text-sage text-xs hover:border-gold/30 hover:bg-white/10 hover:text-cream transition-colors">
                                         {tag}
                                     </button>
                                 ))}
@@ -120,8 +120,8 @@ export const SearchOverlay = () => {
                             </span>
                             <div className="space-y-3">
                                 {filtered.length > 0 ? filtered.map((res, idx) => (
-                                    <div key={idx} onClick={() => handleSelect(res)} className="p-4 rounded-2xl border border-cream/5 flex items-center gap-4 bg-emerald-dark/30 hover:bg-emerald-dark/80 cursor-pointer transition-colors group">
-                                        <div className="w-12 h-12 rounded-full bg-forest flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
+                                    <div key={idx} onClick={() => handleSelect(res)} className="p-4 rounded-2xl border border-cream/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] flex items-center gap-4 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors group">
+                                        <div className="w-12 h-12 rounded-full bg-gold/5 border border-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
                                             <res.icon className="text-xl" />
                                         </div>
                                         <div>

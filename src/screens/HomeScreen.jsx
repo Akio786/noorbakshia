@@ -4,6 +4,7 @@ import { Eyebrow } from '../components/Eyebrow';
 import AmbientHero from '../components/AmbientHero';
 import PrayerAtmosphere from '../components/PrayerAtmosphere';
 import { useApp } from '../AppContext';
+import { MiniQibla } from '../components/MiniQibla';
 import { getUpcomingEvents } from '../utils/events';
 import { getDailyName } from '../data/asmaulHusna';
 import { getCurrentDua } from '../data/contextualDuas';
@@ -62,18 +63,48 @@ export const HomeScreen = ({ setTab }) => {
     };
 
     return (
-        <div className="w-full h-full overflow-y-auto hide-scroll px-6 pt-0 pb-[calc(10rem+env(safe-area-inset-bottom))] flex flex-col gap-6">
-            {/* Top Header (Sticky Fade Mask) */}
-            <div className="self-stretch sticky -top-10 -mx-6 px-6 -mt-10 pt-[calc(3.5rem+env(safe-area-inset-top))] pb-6 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent">
-                <div className="w-full flex justify-between items-center animate-fade-down relative">
+        <div className="w-full h-full relative overflow-hidden bg-[#05110d]">
+            <div className="w-full h-full overflow-y-auto hide-scroll px-6 pt-0 pb-[calc(10rem+env(safe-area-inset-bottom))] flex flex-col gap-6 relative z-10">
+                
+                {/* Scrollable Sky Background */}
+                <div className="absolute top-0 left-0 right-0 h-[55vh] min-h-[400px] z-0 pointer-events-none">
+                    <PrayerAtmosphere currentPrayer={currentPrayerName} />
+                    {/* Gradient overlay to blend the sky smoothly into the dark app background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#05110d]/40 to-[#05110d]"></div>
+                </div>
+
+
+
+                {/* Next Prayer & Mini Qibla */}
+                <div className="flex justify-between items-end w-full relative z-10 pt-[calc(14rem+env(safe-area-inset-top))] px-2 animate-fade-down">
+                    
+                    {/* Left: Next Prayer Info */}
+                    <div className="flex flex-col items-start">
+                        <span className="text-[10px] text-sage/90 uppercase tracking-[0.3em] mb-1 font-bold drop-shadow-md">NEXT PRAYER</span>
+                        <h2 className="font-display text-2xl text-cream uppercase tracking-widest leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] mb-1">
+                            {isLoading ? '...' : nextPrayerName}
+                        </h2>
+                        <div className="flex items-end gap-2 mt-1">
+                            <span className="font-body text-lg text-gold font-bold tracking-widest drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                                {countdown}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Right: Live Qibla Widget */}
+                    <MiniQibla />
+                </div>
+
+                {/* Date & Location Pills */}
+                <div className="w-full flex justify-between items-center animate-fade-down relative px-2">
                     {/* Left: Date Pill */}
-                    <button onClick={() => navigateTo('calendar')} className="bg-cream/5 border border-cream/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-sage hover:bg-cream/10 transition-colors pointer-events-auto shadow-inner">
+                    <button onClick={() => navigateTo('calendar')} className="bg-white/5 border border-cream/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-sage hover:bg-white/10 transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
                         <FaCalendarAlt className="text-gold" />
                         <span>{hijriDateStr}</span>
                     </button>
 
                     {/* Right: Location Pill */}
-                    <div className="bg-cream/5 border border-cream/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-sage pointer-events-auto shadow-inner">
+                    <div className="bg-white/5 border border-cream/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-sage shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
                         {locationError ? (
                             <FaLocationDot className="text-sage" />
                         ) : (
@@ -82,29 +113,6 @@ export const HomeScreen = ({ setTab }) => {
                         <span>{locationName}</span>
                     </div>
                 </div>
-            </div>
-
-            {/* Compact Next Prayer Hero */}
-            <div className="w-full relative animate-fade-down pt-[calc(1rem+env(safe-area-inset-top))] pb-2 z-10">
-                {/* Dynamic Ambient Atmosphere for Hero Focus */}
-                <AmbientHero />
-                
-                <DoubleBezelCard className="!p-0">
-                    <PrayerAtmosphere currentPrayer={currentPrayerName} />
-                    <div className="flex flex-col items-start w-full relative z-10 pt-8 pb-6 px-6">
-                        <span className="text-[10px] text-sage/90 uppercase tracking-[0.3em] mb-1 font-bold drop-shadow-md">NEXT PRAYER</span>
-                        <h2 className="font-display text-4xl text-cream uppercase tracking-widest leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] mb-3">
-                            {isLoading ? '...' : nextPrayerName}
-                        </h2>
-                        
-                        <div className="flex items-end gap-2 mt-1">
-                            <span className="font-body text-2xl text-gold font-bold tracking-widest drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-                                {countdown}
-                            </span>
-                        </div>
-                    </div>
-                </DoubleBezelCard>
-            </div>
 
             {/* Compact Prayer Timeline */}
             <div className="w-full animate-fade-up mt-2 shrink-0">
@@ -163,44 +171,44 @@ export const HomeScreen = ({ setTab }) => {
                 </DoubleBezelCard>
             </div>
 
-            {/* Compact Calendar Events Slider */}
+            {/* Minimal Calendar Events List */}
             <div className="w-full animate-fade-up anim-delay-100 mt-2">
                 <DoubleBezelCard>
                     <div 
-                        className="flex justify-between items-center mb-4 cursor-pointer group" 
+                        className="flex justify-between items-center mb-8 cursor-pointer px-1" 
                         onClick={() => navigateTo('calendar')}
                     >
-                        <h3 className="font-display text-cream text-lg group-hover:text-gold transition-colors">Upcoming Events</h3>
-                        <div className="flex items-center gap-1 text-sage group-hover:text-gold transition-colors">
-                            <span className="text-[10px] uppercase tracking-widest">View Calendar</span>
-                            <FiChevronRight className="text-xs" />
-                        </div>
+                        <span className="text-[10px] uppercase tracking-widest text-sage/70 transition-colors font-bold">
+                            {today.iYear()} AH
+                        </span>
+                        <span className="text-[10px] uppercase tracking-widest text-sage/70 transition-colors font-bold">
+                            {today.iDate()} {HIJRI_MONTHS_EN[today.iMonth()]}
+                        </span>
                     </div>
-                    <div className="flex flex-col gap-3 mt-4">
+                    
+                    <div className="flex flex-col gap-7 px-1">
                         {upcomingEvents.map((event) => {
-                            const hijriDay = event.calculatedDate.format('iD');
-                            const hijriMonth = event.calculatedDate.format('iMMMM');
+                            const todayStart = m().add(hijriOffset, 'days').startOf('day');
+                            const eventStart = event.calculatedDate.clone().startOf('day');
+                            const daysToGo = eventStart.diff(todayStart, 'days');
                             
                             return (
                                 <div 
                                     key={event.id} 
-                                    className="group flex items-center justify-between p-3 pl-4 rounded-[1.5rem] bg-black/20 border border-white/5 hover:border-gold/20 hover:bg-black/40 transition-all duration-500 cursor-pointer shadow-sm"
+                                    className="flex justify-between items-center cursor-pointer"
                                     onClick={() => navigateTo('calendar')}
                                 >
-                                    <div className="flex items-center gap-4">
-                                        {/* Date Badge */}
-                                        <div className="w-12 h-12 rounded-[1rem] bg-emerald-dark/80 border border-cream/10 flex items-center justify-center shrink-0 group-hover:scale-[1.05] transition-transform duration-500 ease-fluid shadow-inner">
-                                            <span className="font-display text-gold text-xl leading-none">{hijriDay}</span>
-                                        </div>
-                                        {/* Event Info */}
-                                        <div className="flex flex-col justify-center">
-                                            <h4 className="font-display text-cream text-[15px] leading-tight group-hover:text-gold transition-colors">{event.title}</h4>
-                                            <span className="text-[10px] text-sage uppercase tracking-widest mt-1">{hijriMonth}</span>
-                                        </div>
+                                    <div className="flex flex-col items-start">
+                                        <h4 className="font-display text-cream text-[1.1rem] leading-none mb-1.5 transition-colors">{event.title}</h4>
+                                        <span className="text-sage text-[10px] lowercase tracking-wide opacity-80">
+                                            {event.calculatedDate.iDate()} {HIJRI_MONTHS_EN[event.calculatedDate.iMonth()]}
+                                        </span>
                                     </div>
-                                    {/* Action Icon */}
-                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sage group-hover:bg-gold/10 group-hover:text-gold group-hover:translate-x-1 transition-all duration-500 ease-fluid shrink-0 mr-1">
-                                        <FiChevronRight className="text-sm" />
+                                    <div className="flex flex-col items-end text-right">
+                                        <h4 className="font-display text-cream text-[1.1rem] leading-none mb-1.5 transition-colors">{event.calculatedDate.format('MMMM D')}</h4>
+                                        <span className="text-sage text-[10px] lowercase tracking-wide opacity-80">
+                                            {daysToGo === 0 ? 'Today' : `${daysToGo} days to go`}
+                                        </span>
                                     </div>
                                 </div>
                             );
@@ -319,7 +327,7 @@ export const HomeScreen = ({ setTab }) => {
                     </div>
                 </DoubleBezelCard>
             </div>
-
+        </div>
         </div>
     );
 };

@@ -101,7 +101,7 @@ export const ProfileScreen = ({ setTab }) => {
                     </div>
                     <button 
                         onClick={() => setTab('settings')}
-                        className="w-12 h-12 rounded-full bg-emerald-dark border border-cream/10 flex items-center justify-center text-sage hover:text-gold hover:border-gold/30 transition-all shadow-inner shrink-0"
+                        className="w-12 h-12 rounded-full bg-white/5 border border-cream/5 flex items-center justify-center text-sage hover:text-gold hover:bg-white/10 transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-md shrink-0"
                     >
                         <FiSettings className="text-2xl" />
                     </button>
@@ -138,7 +138,7 @@ export const ProfileScreen = ({ setTab }) => {
             )}
 
             {/* Segmented Sub-Navigation */}
-            <div className="flex bg-emerald-dark/80 backdrop-blur-md rounded-full border border-cream/10 p-1 mb-6 animate-fade-up anim-delay-200">
+            <div className="flex bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-md rounded-full border border-cream/10 p-1 mb-6 animate-fade-up anim-delay-200">
                 <button 
                     onClick={() => setActiveSection('history')}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-display transition-all ${activeSection === 'history' ? 'bg-gold text-forest shadow-md' : 'text-sage hover:text-cream'}`}
@@ -159,7 +159,7 @@ export const ProfileScreen = ({ setTab }) => {
             {activeSection === 'history' && (
                 <div className="space-y-4 animate-fade-up">
                     {(!readHistory || readHistory.length === 0) ? (
-                        <div className="text-center py-12 bg-emerald-dark/30 rounded-3xl border border-cream/5">
+                        <div className="text-center py-12 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-3xl border border-cream/5">
                             <FiClock className="text-5xl text-gold/30 mb-4 mx-auto block" />
                             <p className="font-display text-cream text-lg">No reading history</p>
                             <p className="text-sm text-sage mt-2 mb-6">Start your journey by reading the Quran.</p>
@@ -185,7 +185,7 @@ export const ProfileScreen = ({ setTab }) => {
                                 <p className="text-center text-sage/50 text-xs py-4">No older history.</p>
                             ) : (
                                 historyList.map((item, idx) => (
-                                    <div key={idx} className="bg-emerald-dark/50 backdrop-blur-sm border border-cream/5 rounded-2xl p-4 flex items-center gap-4 group cursor-pointer hover:bg-emerald-dark transition-colors" onClick={() => handleResume(item)}>
+                                    <div key={idx} className="bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5 rounded-2xl p-4 flex items-center gap-4 group cursor-pointer hover:bg-white/10 transition-colors" onClick={() => handleResume(item)}>
                                         <div className="w-12 h-12 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center shrink-0">
                                             {item.type === 'quran' ? <FiBookOpen className="text-gold text-xl" /> : <FiBook className="text-gold text-xl" />}
                                         </div>
@@ -212,7 +212,7 @@ export const ProfileScreen = ({ setTab }) => {
             {activeSection === 'bookmarks' && (
                 <div className="space-y-4 animate-fade-up">
                     {(!bookmarks || bookmarks.length === 0) ? (
-                        <div className="text-center py-12 bg-emerald-dark/30 rounded-3xl border border-cream/5">
+                        <div className="text-center py-12 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-3xl border border-cream/5">
                             <FiBookmark className="text-5xl text-gold/30 mb-4 mx-auto block" />
                             <p className="font-display text-cream text-lg">No bookmarks saved</p>
                             <p className="text-sm text-sage mt-2 mb-6">Tap the bookmark icon while reading to save pages.</p>
@@ -234,7 +234,7 @@ export const ProfileScreen = ({ setTab }) => {
                                 </button>
                             </div>
                             {bookmarks.map(bm => (
-                                <div key={bm.id} className="bg-emerald-dark/40 border border-cream/5 rounded-2xl p-5 relative overflow-hidden group">
+                                <div key={bm.id} className="bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5 rounded-2xl p-5 relative overflow-hidden group">
                                     <div className="absolute top-0 end-0 w-24 h-24 bg-gold/5 rounded-full blur-xl transform translate-x-1/2 -translate-y-1/2"></div>
                                     <div className="flex justify-between items-start mb-2">
                                         <div>

@@ -140,7 +140,7 @@ export const CalendarScreen = ({ setTab }) => {
                     </div>
 
                     {/* Pill Toggle */}
-                    <div className="flex bg-emerald-dark/80 backdrop-blur-md rounded-full border border-cream/10 p-1">
+                    <div className="flex bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-md rounded-full border border-cream/10 p-1">
                         <button 
                             onClick={() => setCalendarMode('gregorian')}
                             className={`px-4 py-1.5 rounded-full text-xs font-display transition-all ${calendarMode === 'gregorian' ? 'bg-gold text-forest shadow-md' : 'text-sage hover:text-cream'}`}

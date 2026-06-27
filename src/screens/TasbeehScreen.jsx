@@ -61,7 +61,7 @@ export const TasbeehScreen = ({ setTab }) => {
                     <GiPrayerBeads className="text-gold text-2xl" />
                     <h2 className="font-display text-3xl text-cream tracking-wide">Tasbeeh</h2>
                 </div>
-                <button onClick={resetCount} className="w-10 h-10 rounded-full border border-cream/10 flex items-center justify-center text-sage hover:text-gold hover:border-gold/30 transition-all shadow-inner bg-emerald-dark">
+                <button onClick={resetCount} className="w-10 h-10 rounded-full border border-cream/10 flex items-center justify-center text-sage hover:text-gold hover:border-gold/30 hover:bg-white/10 transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] bg-white/5">
                     <FiRefreshCw className="text-xl" />
                 </button>
             </div>
@@ -84,9 +84,9 @@ export const TasbeehScreen = ({ setTab }) => {
                     <div className={`absolute inset-0 border border-gold rounded-full transition-all duration-300 ease-out pointer-events-none ${animate ? 'scale-150 opacity-0' : 'scale-100 opacity-50'}`}></div>
 
                     {/* The Button */}
-                    <div className="w-64 h-64 rounded-full bg-emerald-dark ring-1 ring-cream/10 shadow-[inset_0_2px_20px_rgba(201,168,76,0.05)] flex items-center justify-center relative overflow-hidden transition-transform duration-75 active:scale-[0.97]">
+                    <div className="w-64 h-64 rounded-full bg-white/5 border border-cream/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] flex items-center justify-center relative overflow-hidden transition-transform duration-75 active:scale-[0.97]">
                         {/* Inner Gradient Core */}
-                        <div className="absolute inset-3 rounded-full bg-gradient-to-b from-emerald-mid to-[#0a1b14] flex flex-col items-center justify-center shadow-2xl">
+                        <div className="absolute inset-3 rounded-full bg-gradient-to-b from-white/5 to-white/0 border border-cream/5 flex flex-col items-center justify-center shadow-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
                             <span className="font-display text-7xl text-cream mb-2 transition-all select-none">{count}</span>
                             <span className="text-[10px] text-sage tracking-[0.2em] uppercase select-none">Total: {totalCount}</span>
                         </div>

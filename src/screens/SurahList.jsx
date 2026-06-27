@@ -65,7 +65,7 @@ export const SurahList = ({ setTab }) => {
                     </div>
 
                     {/* Tab Toggle */}
-                    <div className="flex bg-emerald-dark/80 backdrop-blur-md rounded-full border border-cream/10 p-1 mb-4">
+                    <div className="flex bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-md rounded-full border border-cream/10 p-1 mb-4">
                         <button 
                             onClick={() => setActiveTab('surah')}
                             className={`flex-1 py-2 rounded-full text-xs font-display tracking-widest uppercase transition-all ${activeTab === 'surah' ? 'bg-gold text-forest shadow-md' : 'text-sage hover:text-cream'}`}
@@ -88,7 +88,7 @@ export const SurahList = ({ setTab }) => {
                             placeholder={activeTab === 'surah' ? "Search Surah..." : "Search Juz number..."} 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-emerald-dark/50 border border-cream/10 rounded-2xl py-3 ps-12 pe-4 text-cream font-body text-sm focus:outline-none focus:border-gold/30 placeholder-sage/50"
+                            className="w-full bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/10 rounded-2xl py-3 ps-12 pe-4 text-cream font-body text-sm focus:outline-none focus:border-gold/30 placeholder-sage/50"
                         />
                     </div>
                 </div>

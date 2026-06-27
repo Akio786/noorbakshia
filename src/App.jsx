@@ -4,6 +4,7 @@ import { useApp } from './AppContext';
 import { useStore } from './store/useStore';
 import { BottomNav } from './components/BottomNav';
 import { DoubleBezelCard } from './components/DoubleBezelCard';
+import { LandscapeOverlay } from './components/LandscapeOverlay';
 
 // Screens
 import { HomeScreen } from './screens/HomeScreen';
@@ -89,6 +90,7 @@ function App() {
 
   return (
       <ErrorBoundary>
+          <LandscapeOverlay />
           <div className="device-frame">
               {/* Main View Area */}
               <div className="w-full h-full relative overflow-hidden bg-[#05110d] animate-fade-in z-10">

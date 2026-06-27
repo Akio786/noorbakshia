@@ -45,16 +45,22 @@ export default {
           '50%': { opacity: 0.6 },
         },
         pan: {
-          '0%': { transform: 'translateX(-10%)' },
-          '100%': { transform: 'translateX(100%)' },
+          '0%': { transform: 'translateX(-250px)' },
+          '100%': { transform: 'translateX(120vw)' },
+        },
+        'landscape-rotate': {
+          '0%, 20%': { transform: 'rotate(90deg)' },
+          '50%, 70%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(90deg)' },
         }
       },
       animation: {
         'float': 'float 8s ease-in-out infinite',
         'twinkle': 'twinkle 4s ease-in-out infinite',
         'pulse-slow': 'pulse-slow 6s ease-in-out infinite',
-        'pan-slow': 'pan 60s linear infinite',
-        'pan-slower': 'pan 100s linear infinite',
+        'pan-slow': 'pan 60s ease-in-out infinite alternate',
+        'pan-slower': 'pan 100s ease-in-out infinite alternate',
+        'landscape-rotate': 'landscape-rotate 3s cubic-bezier(0.32, 0.72, 0, 1) infinite',
       }
     },
   },

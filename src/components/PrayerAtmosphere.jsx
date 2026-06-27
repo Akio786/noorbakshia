@@ -1,5 +1,4 @@
 import React from 'react';
-import { BsSunFill, BsFillMoonStarsFill } from 'react-icons/bs';
 
 const PrayerAtmosphere = ({ currentPrayer }) => {
     const getTheme = () => {
@@ -10,7 +9,7 @@ const PrayerAtmosphere = ({ currentPrayer }) => {
                     sky: 'from-[#0b1021] via-[#1b1b3a] to-[#d88c6b]/80',
                     sun: false,
                     moon: true,
-                    celestialClass: 'text-cream/80 bottom-8 right-10 drop-shadow-[0_0_25px_rgba(245,230,200,0.6)] scale-125',
+                    celestialClass: 'text-cream/80 bottom-24 right-10 drop-shadow-[0_0_25px_rgba(245,230,200,0.6)] scale-125',
                     cloudColor: 'text-[#d88c6b]/20',
                     stars: true,
                 };
@@ -19,7 +18,7 @@ const PrayerAtmosphere = ({ currentPrayer }) => {
                     sky: 'from-[#1e5eb3] via-[#4a90e2] to-[#8fd3f4]',
                     sun: true,
                     moon: false,
-                    celestialClass: 'text-[#fdf2b3] top-8 right-8 drop-shadow-[0_0_40px_rgba(253,242,179,1)] scale-150',
+                    celestialClass: 'text-[#fdf2b3] top-28 right-8 drop-shadow-[0_0_40px_rgba(253,242,179,1)] scale-150',
                     cloudColor: 'text-white/30',
                     stars: false,
                 };
@@ -47,7 +46,7 @@ const PrayerAtmosphere = ({ currentPrayer }) => {
                     sky: 'from-[#030706] via-[#081210] to-[#0a1a2f]',
                     sun: false,
                     moon: true,
-                    celestialClass: 'text-[#e2e8f0]/90 top-10 right-10 drop-shadow-[0_0_30px_rgba(226,232,240,0.5)] scale-110',
+                    celestialClass: 'text-[#e2e8f0]/90 top-28 right-10 drop-shadow-[0_0_30px_rgba(226,232,240,0.5)] scale-110',
                     cloudColor: 'text-[#94a3b8]/5',
                     stars: true,
                 };
@@ -73,34 +72,52 @@ const PrayerAtmosphere = ({ currentPrayer }) => {
 
             {/* Stars */}
             {theme.stars && (
-                <div className="absolute inset-0 z-0 opacity-80">
-                    <div className="absolute top-6 left-10 w-1 h-1 bg-white rounded-full animate-twinkle"></div>
-                    <div className="absolute top-12 left-1/3 w-1.5 h-1.5 bg-white rounded-full animate-twinkle" style={{ animationDelay: '1s' }}></div>
-                    <div className="absolute top-8 right-16 w-[2px] h-[2px] bg-white rounded-full animate-twinkle" style={{ animationDelay: '0.5s' }}></div>
-                    <div className="absolute top-20 right-1/4 w-2 h-2 bg-white rounded-full animate-twinkle" style={{ animationDelay: '2s' }}></div>
-                    <div className="absolute bottom-1/2 left-8 w-[3px] h-[3px] bg-white rounded-full animate-twinkle" style={{ animationDelay: '1.5s' }}></div>
+                <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen">
+                    <div className="absolute top-6 left-10 w-[2px] h-[2px] bg-white rounded-full animate-twinkle shadow-[0_0_4px_white]"></div>
+                    <div className="absolute top-12 left-1/3 w-[1.5px] h-[1.5px] bg-white rounded-full animate-twinkle shadow-[0_0_4px_white]" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute top-8 right-16 w-[2px] h-[2px] bg-white rounded-full animate-twinkle shadow-[0_0_4px_white]" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="absolute top-20 right-1/4 w-[1px] h-[1px] bg-white rounded-full animate-twinkle shadow-[0_0_3px_white]" style={{ animationDelay: '2s' }}></div>
+                    <div className="absolute bottom-1/2 left-8 w-[2.5px] h-[2.5px] bg-white rounded-full animate-twinkle shadow-[0_0_5px_white]" style={{ animationDelay: '1.5s' }}></div>
+                    {/* Extra depth stars */}
+                    <div className="absolute top-1/4 left-1/4 w-[1px] h-[1px] bg-white/60 rounded-full animate-twinkle shadow-[0_0_2px_white]" style={{ animationDelay: '3s' }}></div>
+                    <div className="absolute top-1/3 right-1/3 w-[1.5px] h-[1.5px] bg-white/80 rounded-full animate-twinkle shadow-[0_0_3px_white]" style={{ animationDelay: '2.5s' }}></div>
                 </div>
             )}
 
             {/* Celestial Body (Sun/Moon) */}
-            <div className={`absolute transition-all duration-1000 ease-[cubic-bezier(0.32,0.72,0,1)] ${theme.celestialClass}`}>
-                {theme.sun && <BsSunFill className="text-4xl" />}
-                {theme.moon && <BsFillMoonStarsFill className="text-3xl" />}
+            <div className={`absolute transition-all duration-1000 ease-[cubic-bezier(0.32,0.72,0,1)] ${theme.celestialClass} z-10`}>
+                {theme.sun && (
+                    <div className="relative flex items-center justify-center">
+                        <div className="absolute w-[300%] h-[300%] bg-current rounded-full blur-[50px] opacity-100"></div>
+                        <div className="w-16 h-16 bg-current rounded-full blur-[3px] relative z-10 shadow-[0_0_40px_currentColor]"></div>
+                        <div className="absolute w-12 h-12 bg-white rounded-full blur-[2px] z-20 opacity-100"></div>
+                    </div>
+                )}
+                {theme.moon && (
+                    <div className="relative flex items-center justify-center">
+                        <div className="absolute w-[300%] h-[300%] bg-current rounded-full blur-[40px] opacity-80"></div>
+                        <svg viewBox="0 0 24 24" className="w-12 h-12 text-current relative z-10 drop-shadow-[0_0_20px_currentColor]" fill="currentColor">
+                            <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.28.25-2.505.703-3.633a9.75 9.75 0 1012.799 12.635z"/>
+                        </svg>
+                    </div>
+                )}
             </div>
 
-            {/* Clouds */}
-            <div className={`absolute top-2 left-0 right-0 z-0 ${theme.cloudColor} opacity-70`}>
-                <svg className="w-32 h-auto animate-pan-slower absolute top-2 -left-10 blur-[1px]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.5 19c-2.485 0-4.5-2.015-4.5-4.5 0-.156.008-.31.023-.46A5.5 5.5 0 0 0 7.5 14a5.485 5.485 0 0 0-4.04 1.83 3.501 3.501 0 0 1 .04-5.83A5.485 5.485 0 0 1 7.5 8c2.612 0 4.814 1.82 5.344 4.256A4.5 4.5 0 0 1 17.5 10c2.485 0 4.5 2.015 4.5 4.5S19.985 19 17.5 19z"/>
-                </svg>
-                <svg className="w-48 h-auto animate-pan-slow absolute top-8 -left-32 opacity-80 blur-[2px]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.5 19c-2.485 0-4.5-2.015-4.5-4.5 0-.156.008-.31.023-.46A5.5 5.5 0 0 0 7.5 14a5.485 5.485 0 0 0-4.04 1.83 3.501 3.501 0 0 1 .04-5.83A5.485 5.485 0 0 1 7.5 8c2.612 0 4.814 1.82 5.344 4.256A4.5 4.5 0 0 1 17.5 10c2.485 0 4.5 2.015 4.5 4.5S19.985 19 17.5 19z"/>
-                </svg>
+            {/* Atmospheric Haze / Clouds */}
+            <div className={`absolute top-0 left-0 right-0 z-0 ${theme.cloudColor} opacity-100 pointer-events-none`}>
+                {/* Cloud 1 */}
+                <div className="absolute top-10 -left-[200px] w-[500px] h-32 bg-current rounded-[100%] blur-[30px] animate-pan-slower" style={{ animationDelay: '-20s' }}></div>
+                {/* Cloud 2 */}
+                <div className="absolute top-32 -left-[200px] w-[600px] h-40 bg-current rounded-[100%] blur-[40px] opacity-90 animate-pan-slow" style={{ animationDelay: '-50s' }}></div>
+                {/* Cloud 3 */}
+                <div className="absolute top-4 -left-[200px] w-[400px] h-24 bg-current rounded-[100%] blur-[20px] opacity-100 animate-pan-slower" style={{ animationDelay: '-80s' }}></div>
             </div>
 
             {/* Mosque Silhouette - Enhanced & Realistic */}
-            <div className="absolute bottom-0 left-0 right-0 z-0 text-[#030a07] opacity-[0.65] mix-blend-multiply drop-shadow-2xl">
-                <svg viewBox="0 0 800 200" className="w-full h-auto translate-y-2 scale-105 transform origin-bottom" fill="currentColor" preserveAspectRatio="none">
+            <div className="absolute bottom-0 left-0 right-0 z-20 text-[#05110d] opacity-100 drop-shadow-2xl flex justify-center">
+                {/* Solid base filler to prevent floating when translated up */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-[#05110d]"></div>
+                <svg viewBox="0 0 800 400" className="w-[150%] max-w-none md:w-full h-auto -translate-y-40 transform origin-bottom relative" fill="currentColor">
                     
                     {/* Layer 1: Background Rolling Hills */}
                     <path d="M 0 180 Q 200 120 450 160 T 800 140 L 800 200 L 0 200 Z" opacity="0.4" />
@@ -143,18 +160,18 @@ const PrayerAtmosphere = ({ currentPrayer }) => {
                         <path d="M 602 10 L 602 0" stroke="currentColor" strokeWidth="2" />
                         
                         {/* Archway details (Doors/Windows) */}
-                        <path d="M 370 200 L 370 150 A 30 30 0 0 1 430 150 L 430 200 Z" fill="#05110d" opacity="0.3" />
-                        <path d="M 250 200 L 250 160 A 15 15 0 0 1 280 160 L 280 200 Z" fill="#05110d" opacity="0.3" />
-                        <path d="M 520 200 L 520 160 A 15 15 0 0 1 550 160 L 550 200 Z" fill="#05110d" opacity="0.3" />
+                        <path d="M 370 200 L 370 150 A 30 30 0 0 1 430 150 L 430 200 Z" fill="#C9A84C" opacity="0.15" />
+                        <path d="M 250 200 L 250 160 A 15 15 0 0 1 280 160 L 280 200 Z" fill="#C9A84C" opacity="0.1" />
+                        <path d="M 520 200 L 520 160 A 15 15 0 0 1 550 160 L 550 200 Z" fill="#C9A84C" opacity="0.1" />
                     </g>
                     
                     {/* Layer 3: Foreground Base */}
-                    <rect x="0" y="200" width="800" height="5" />
+                    <rect x="0" y="200" width="800" height="200" />
                 </svg>
             </div>
 
             {/* Tinted glass overlay for text legibility (Deep fade up) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#05110d] via-[#05110d]/50 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#05110d] from-10% via-[#05110d]/50 to-transparent z-10 pointer-events-none"></div>
         </div>
     );
 };

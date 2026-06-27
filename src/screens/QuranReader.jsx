@@ -370,7 +370,7 @@ export const QuranReader = ({ setTab, selectedBook }) => {
         <div id="quran-scroll-container" className="scroll-smooth w-full h-full overflow-y-auto hide-scroll px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col items-center relative">
             
             {/* Header Sticky (Fade Mask) */}
-            <div className="w-full sticky top-0 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent -mx-6 px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8">
+            <div className="sticky top-0 z-[100] pointer-events-none bg-gradient-to-b from-[#05110d] from-40% via-[#05110d]/90 to-transparent self-stretch -mx-6 px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8">
                 <div className="w-full flex items-center justify-between pointer-events-auto">
                     <div className="flex items-center gap-3">
                         <button onClick={handleGoBack} className="w-10 h-10 rounded-full border border-cream/10 flex items-center justify-center text-sage hover:text-gold hover:border-gold/30 transition-all shadow-inner bg-emerald-dark">
@@ -592,11 +592,11 @@ export const QuranReader = ({ setTab, selectedBook }) => {
             {/* Settings Modal */}
             {settingsOpen && (
                 <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSettingsOpen(false)}></div>
-                    <div className="w-full max-w-md bg-forest border border-cream/10 rounded-3xl p-6 relative z-10 animate-fade-up shadow-2xl">
+                    <div className="absolute inset-0 bg-[#05110d]/80" onClick={() => setSettingsOpen(false)}></div>
+                    <div className="w-full max-w-md bg-[#0a1e16]/90 backdrop-blur-2xl border border-cream/10 rounded-[2rem] p-6 relative z-10 animate-fade-up shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
                         <div className="flex justify-between items-center mb-6 border-b border-cream/5 pb-4">
                             <h3 className="font-display text-xl text-cream">Reading Settings</h3>
-                            <button onClick={() => setSettingsOpen(false)} className="text-sage hover:text-cream">
+                            <button onClick={() => setSettingsOpen(false)} className="text-sage hover:text-cream transition-colors">
                                 <FiX className="text-xl" />
                             </button>
                         </div>
@@ -604,22 +604,22 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                         {/* Reading Mode Select */}
                         <div className="mb-6">
                             <label className="text-[10px] text-sage uppercase tracking-widest font-semibold mb-3 block">Reading Mode</label>
-                            <div className="flex gap-2 p-1 bg-emerald-dark rounded-xl border border-cream/5">
+                            <div className="flex gap-2 p-1.5 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-2xl border border-cream/5">
                                 <button 
                                     onClick={() => updateQuranSettings({ showArabic: true, showTranslation: false })}
-                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${quranSettings.showArabic && !quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                    className={`flex-1 py-2 rounded-xl text-[13px] transition-all duration-300 ${quranSettings.showArabic && !quranSettings.showTranslation ? 'bg-white/10 text-gold border border-gold/20 shadow-md' : 'text-sage hover:text-cream'}`}
                                 >
                                     Arabic
                                 </button>
                                 <button 
                                     onClick={() => updateQuranSettings({ showArabic: true, showTranslation: true })}
-                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${quranSettings.showArabic && quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                    className={`flex-1 py-2 rounded-xl text-[13px] transition-all duration-300 ${quranSettings.showArabic && quranSettings.showTranslation ? 'bg-white/10 text-gold border border-gold/20 shadow-md' : 'text-sage hover:text-cream'}`}
                                 >
                                     Both
                                 </button>
                                 <button 
                                     onClick={() => updateQuranSettings({ showArabic: false, showTranslation: true })}
-                                    className={`flex-1 py-2 rounded-lg text-[13px] transition-colors ${!quranSettings.showArabic && quranSettings.showTranslation ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                    className={`flex-1 py-2 rounded-xl text-[13px] transition-all duration-300 ${!quranSettings.showArabic && quranSettings.showTranslation ? 'bg-white/10 text-gold border border-gold/20 shadow-md' : 'text-sage hover:text-cream'}`}
                                 >
                                     Translation
                                 </button>
@@ -629,16 +629,16 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                         {/* Translation Select */}
                         <div className="mb-8">
                             <label className="text-[10px] text-sage uppercase tracking-widest font-semibold mb-3 block">Translation Language</label>
-                            <div className="flex gap-2 p-1 bg-emerald-dark rounded-xl border border-cream/5">
+                            <div className="flex gap-2 p-1.5 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-2xl border border-cream/5">
                                 <button 
                                     onClick={() => updateQuranSettings({ translationLanguage: 'en.sahih' })}
-                                    className={`flex-1 py-2 rounded-lg text-sm transition-colors ${!isUrdu ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                    className={`flex-1 py-2 rounded-xl text-sm transition-all duration-300 ${!isUrdu ? 'bg-white/10 text-gold border border-gold/20 shadow-md' : 'text-sage hover:text-cream'}`}
                                 >
                                     English (Sahih)
                                 </button>
                                 <button 
                                     onClick={() => updateQuranSettings({ translationLanguage: 'ur.junagarhi' })}
-                                    className={`flex-1 py-2 rounded-lg text-sm transition-colors ${isUrdu ? 'bg-forest text-gold border border-gold/30 shadow-md' : 'text-sage hover:text-cream'}`}
+                                    className={`flex-1 py-2 rounded-xl text-sm transition-all duration-300 ${isUrdu ? 'bg-white/10 text-gold border border-gold/20 shadow-md' : 'text-sage hover:text-cream'}`}
                                 >
                                     Urdu (Junagarhi)
                                 </button>
@@ -651,13 +651,15 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                 <label className="text-[10px] text-sage uppercase tracking-widest font-semibold">Arabic Size</label>
                                 <span className="text-xs text-gold">{quranSettings.arabicFontSize}px</span>
                             </div>
-                            <input 
-                                type="range" 
-                                min="20" max="64" 
-                                value={quranSettings.arabicFontSize}
-                                onChange={(e) => updateQuranSettings({ arabicFontSize: parseInt(e.target.value) })}
-                                className="w-full accent-gold h-1 bg-emerald-dark rounded-full appearance-none outline-none"
-                            />
+                            <div className="p-4 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-2xl border border-cream/5">
+                                <input 
+                                    type="range" 
+                                    min="20" max="64" 
+                                    value={quranSettings.arabicFontSize}
+                                    onChange={(e) => updateQuranSettings({ arabicFontSize: parseInt(e.target.value) })}
+                                    className="w-full accent-gold h-1.5 bg-black/20 rounded-full appearance-none outline-none"
+                                />
+                            </div>
                         </div>
 
                         {/* Translation Size Slider */}
@@ -666,13 +668,15 @@ export const QuranReader = ({ setTab, selectedBook }) => {
                                 <label className="text-[10px] text-sage uppercase tracking-widest font-semibold">Translation Size</label>
                                 <span className="text-xs text-gold">{quranSettings.translationFontSize}px</span>
                             </div>
-                            <input 
-                                type="range" 
-                                min="12" max="32" 
-                                value={quranSettings.translationFontSize}
-                                onChange={(e) => updateQuranSettings({ translationFontSize: parseInt(e.target.value) })}
-                                className="w-full accent-gold h-1 bg-emerald-dark rounded-full appearance-none outline-none"
-                            />
+                            <div className="p-4 bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-2xl border border-cream/5">
+                                <input 
+                                    type="range" 
+                                    min="12" max="32" 
+                                    value={quranSettings.translationFontSize}
+                                    onChange={(e) => updateQuranSettings({ translationFontSize: parseInt(e.target.value) })}
+                                    className="w-full accent-gold h-1.5 bg-black/20 rounded-full appearance-none outline-none"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -681,39 +685,39 @@ export const QuranReader = ({ setTab, selectedBook }) => {
             {/* Tajweed Legend Modal */}
             {legendOpen && (
                 <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setLegendOpen(false)}></div>
-                    <div className="w-full max-w-md bg-forest border border-cream/10 rounded-3xl p-6 relative z-10 animate-fade-up shadow-2xl">
+                    <div className="absolute inset-0 bg-[#05110d]/80" onClick={() => setLegendOpen(false)}></div>
+                    <div className="w-full max-w-md bg-[#0a1e16]/90 backdrop-blur-2xl border border-cream/10 rounded-[2rem] p-6 relative z-10 animate-fade-up shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
                         <div className="flex justify-between items-center mb-6 border-b border-cream/5 pb-4">
                             <h3 className="font-display text-xl text-cream flex items-center gap-2">
                                 <FaPalette className="text-gold" /> Tajweed Rules
                             </h3>
-                            <button onClick={() => setLegendOpen(false)} className="text-sage hover:text-cream">
+                            <button onClick={() => setLegendOpen(false)} className="text-sage hover:text-cream transition-colors">
                                 <FiX className="text-xl" />
                             </button>
                         </div>
                         
                         <div className="space-y-3 font-display">
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-dark border border-cream/5">
+                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5">
                                 <span className="text-sage text-sm">Idgham</span>
                                 <span className="tajweed-idgham font-indopak text-2xl">ي ر م ل و ن</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-dark border border-cream/5">
+                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5">
                                 <span className="text-sage text-sm">Ikhfa</span>
                                 <span className="tajweed-ikhfa font-indopak text-2xl">ت ث ج د ذ...</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-dark border border-cream/5">
+                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5">
                                 <span className="text-sage text-sm">Ghunnah</span>
                                 <span className="tajweed-ghunnah font-indopak text-2xl">نّ مّ</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-dark border border-cream/5">
+                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5">
                                 <span className="text-sage text-sm">Qalqalah</span>
                                 <span className="tajweed-qalqalah font-indopak text-2xl">ق ط ب ج د</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-dark border border-cream/5">
+                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5">
                                 <span className="text-sage text-sm">Madd</span>
                                 <span className="tajweed-madd font-indopak text-2xl">ـٓ</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-dark border border-cream/5">
+                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-cream/5">
                                 <span className="text-sage text-sm">Qalb</span>
                                 <span className="tajweed-qalb font-indopak text-2xl">ۢ</span>
                             </div>
